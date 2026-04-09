@@ -378,13 +378,13 @@ function Hero({ mode, lang }) {
         </div>
 
         <div style={{animation:"fadeUp .9s ease .45s both"}}>
-          <h1 style={{fontFamily: lang==="ja"?"var(--serif)":"var(--sans)",fontSize:"clamp(38px,6vw,80px)",fontWeight: lang==="ja"?700:800,lineHeight:1,letterSpacing: lang==="ja"?"0":"-.03em",color:"#fff",marginBottom:6}}>
+          <h1 style={{fontFamily: lang==="ja"?"var(--serif)":"var(--sans)",fontSize:"clamp(28px,5.5vw,80px)",fontWeight: lang==="ja"?700:800,lineHeight:1.1,letterSpacing: lang==="ja"?"0":"-.03em",color:"#fff",marginBottom:6,whiteSpace:"nowrap"}}>
             {lang==="kr" ? "코드 한 줄로 세계를" : "コード一つで世界を"}
           </h1>
-          <h1 style={{fontFamily: lang==="ja"?"var(--serif)":"var(--sans)",fontSize:"clamp(38px,6vw,80px)",fontWeight: lang==="ja"?700:800,lineHeight:1,letterSpacing: lang==="ja"?"0":"-.03em",
+          <h1 style={{fontFamily: lang==="ja"?"var(--serif)":"var(--sans)",fontSize:"clamp(28px,5.5vw,80px)",fontWeight: lang==="ja"?700:800,lineHeight:1.1,letterSpacing: lang==="ja"?"0":"-.03em",
             background:"linear-gradient(135deg,#6c5fff 0%,#ff5c8a 50%,#ffb347 100%)",
             backgroundSize:"200%",animation:"shimmer 6s linear infinite",
-            WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",marginBottom:4,
+            WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",marginBottom:4,whiteSpace:"nowrap",
           }}>
             {lang==="kr" ? "망가뜨리고 다시 짓는다" : "壊してまた建てる"}
           </h1>
@@ -393,7 +393,7 @@ function Hero({ mode, lang }) {
           </div>
         </div>
 
-        <div style={{animation:"fadeUp .9s ease .6s both",marginTop:32,display:"flex",alignItems:"center",gap:14}}>
+        <div style={{animation:"fadeUp .9s ease .6s both",marginTop:32,display:"flex",alignItems:"center",gap:14,whiteSpace:"nowrap"}}>
           <span style={{fontFamily:"'Instrument Serif',serif",fontStyle:"italic",fontSize:18,color:"var(--fg2)"}}>{lang==="kr" ? "I am a" : "私は"}</span>
           <div style={{position:"relative",height:36,minWidth:130}}>
             {(lang==="kr" ? roles.kr : roles.ja).map((r,i)=>(
@@ -636,7 +636,11 @@ function ProjectCard({ p, delay=0, idx=0 }) {
 
       <div style={{position:"relative",zIndex:1}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18}}>
-          <div style={{width:46,height:46,borderRadius:13,background:`${p.color}14`,border:`1px solid ${p.color}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,transition:"transform .3s",transform:hov?"scale(1.12) rotate(-6deg)":"scale(1)"}}>{p.icon}</div>
+          {p.link ? (
+            <a href={p.link} target="_blank" rel="noopener noreferrer" style={{width:46,height:46,borderRadius:13,background:`${p.color}14`,border:`1px solid ${p.color}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,transition:"transform .3s",transform:hov?"scale(1.12) rotate(-6deg)":"scale(1)",textDecoration:"none"}}>{p.icon}</a>
+          ) : (
+            <div style={{width:46,height:46,borderRadius:13,background:`${p.color}14`,border:`1px solid ${p.color}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,transition:"transform .3s",transform:hov?"scale(1.12) rotate(-6deg)":"scale(1)"}}>{p.icon}</div>
+          )}
           <div style={{fontFamily:"var(--serif)",fontSize:11,color:"var(--fg3)",textAlign:"right",letterSpacing:".04em",lineHeight:1.6}}>{p.ja}</div>
         </div>
 
@@ -901,9 +905,9 @@ const RELEASED_APPS = [
 ];
 
 const UPCOMING = [
-  { title:"Untitled: Dystopia Management", ja:"ディストピア経営", desc_kr:"윤리를 버려야 생존하는 디스토피아 경영 시뮬레이션.", desc_ja:"生存のために倫理を捨てる。暗いなりにあなたは何を守るのか。", tags:["Simulation","Strategy","Dark Future"] },
-  { title:"Untitled: Rulebook", ja:"規則書", desc_kr:"폐쇄 공간에서 규칙서를 따르는 공포. 한 줄의 위반이 죽음.", desc_ja:"閉ざされた空間で、謎の「規則書」に従うか。一行の違反が死を呼ぶ。", tags:["Horror","Psychological","Mystery"] },
-  { title:"Untitled: Eternal Loop", ja:"永遠の回帰", desc_kr:"동료들과 끝나지 않는 시간을 반복하는 타임루프 내러티브.", desc_ja:"仲間たちと共に、終わらない時間を繰り返す。心崩と再生の果てに。", tags:["Narrative","Time Loop","Drama"] },
+  { title:"진보의 대가", ja:"ディストピア経営", desc_kr:"윤리를 버려야 생존하는 디스토피아 경영 시뮬레이션.", desc_ja:"生存のために倫理を捨てる。暗いなりにあなたは何を守るのか。", tags:["Simulation","Strategy","Dark Future"], link:"https://play.google.com/store/apps/details?id=com.occultai.priceofp" },
+  { title:"산중관리동", ja:"規則書", desc_kr:"폐쇄 공간에서 규칙서를 따르는 공포. 한 줄의 위반이 죽음.", desc_ja:"閉ざされた空間で、謎の「規則書」に従うか。一行の違反が死を呼ぶ。", tags:["Horror","Psychological","Mystery"], link:"https://play.google.com/store/apps/details?id=com.occultai.napolitan" },
+  { title:"6월 11일, 영원히", ja:"永遠の回帰", desc_kr:"동료들과 끝나지 않는 시간을 반복하는 타임루프 내러티브.", desc_ja:"仲間たちと共に、終わらない時間を繰り返す。心崩と再生の果てに。", tags:["Narrative","Time Loop","Drama"], link:"https://play.google.com/store/apps/details?id=com.occultai.june" },
 ];
 
 function OccultAppsSection({ lang }) {
@@ -953,13 +957,13 @@ function OccultUpcomingSection({ lang }) {
     <section id="upcoming" className="section-pad">
       <div ref={ref} className="reveal">
         <pre style={{fontFamily:"var(--mono)",fontSize:10,color:"#22cc55",letterSpacing:2,marginBottom:16}}>
-{`════════════ PROJECTS IN DEVELOPMENT ════════════`}
+{`════════════ MORE PROJECTS ════════════`}
         </pre>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16}}>
           {UPCOMING.map((p,i)=>(
             <div key={i} style={{padding:"24px",border:"1px solid rgba(0,255,0,.12)",background:"rgba(0,255,0,.01)"}}>
-              <div style={{fontFamily:"var(--mono)",fontSize:9,color:"#22cc55",marginBottom:8,letterSpacing:".15em"}}>COMING SOON</div>
-              <h3 style={{fontFamily:"var(--mono)",fontSize:15,color:"#0f0",marginBottom:4}}>{p.title}</h3>
+              <div style={{fontFamily:"var(--mono)",fontSize:9,color:"#22cc55",marginBottom:8,letterSpacing:".15em"}}>{p.link ? "RELEASED" : "COMING SOON"}</div>
+              <h3 style={{fontFamily:"var(--mono)",fontSize:15,color:"#0f0",marginBottom:4}}>{p.link ? <a href={p.link} target="_blank" rel="noopener noreferrer" style={{color:"inherit",textDecoration:"none"}}>{p.title} ↗</a> : p.title}</h3>
               <div style={{fontFamily:"var(--serif)",fontSize:11,color:"#1a9944",marginBottom:10}}>{p.ja}</div>
               <p style={{fontFamily:"var(--mono)",fontSize:12,color:"#22cc55",lineHeight:1.7,marginBottom:12}}>{lang==="kr" ? p.desc_kr : p.desc_ja}</p>
               <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
