@@ -497,7 +497,7 @@ function StatsBar({ lang }) {
     { num: "~10k", label: "Lines of Code" },
     { num: "2", label: "Languages (KR/JA)" },
   ] : [
-    { num: "5+", label: "Webプロジェクト" },
+    { num: "6+", label: "Webプロジェクト" },
     { num: "3", label: "リリース済みアプリ" },
     { num: "~10k", label: "コード行数" },
     { num: "2", label: "言語 (KR/JA)" },
@@ -609,9 +609,28 @@ Object.entries(TRAINING[choice]).forEach(
   transform: rotate(-3deg);
 }`,
   },
+  {
+    icon:"⚔", color:"#4de8b0",
+    title:"Co-op Roguelike",
+    ja:"協力型ローグライク",
+    sub:"파티 로그라이크 · パーティローグライク",
+    link:"/showcase/roguelike-game/",
+    problem:"2인 파티의 전투·이벤트·유대 시스템이 얽혀서, 상태 관리가 복잡해졌다. useReducer 하나로 전투/탐사/세이브 전부 돌려야 했다.",
+    solution:"useReducer + Context로 전체 상태를 한 곳에서 관리. 난이도별 배율, 유대 기반 콤보 확률, 세이브/로드까지 단일 파일로 완성.",
+    result:"10층 던전 + 다분기 엔딩 7종 + 히든 엔딩 + 난이도 시스템. 685줄 단일 컴포넌트.",
+    tags:["useReducer","Context","Roguelike","Sound","i18n"],
+    snippet:`// 콤보 확률 = 유대(bond) 비례
+const comboChance = Math.min(
+  0.5, state.bond * 0.015
+);
+if (synergy >= 15 && bond >= 8
+  && Math.random() < comboChance) {
+  // 합동 공격 발동!
+}`,
+  },
 ];
 
-const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네"];
+const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네","685줄에 다 넣음"];
 
 function ProjectCard({ p, delay=0, idx=0 }) {
   const ref = useReveal();
@@ -690,9 +709,9 @@ function ProjectsSection({ lang }) {
       <div ref={ref} className="reveal" style={{marginBottom:52}}>
         <div style={{fontFamily:"var(--mono)",fontSize:10,letterSpacing:".2em",color:"var(--b)",marginBottom:10,textTransform:"uppercase"}}>{lang==="kr" ? "Selected Works · 作品集" : "作品集 · Selected Works"}</div>
         <h2 style={{fontFamily:"var(--sans)",fontSize:"clamp(36px,5.5vw,68px)",fontWeight:800,letterSpacing:"-.03em",lineHeight:.97,color:"#fff"}}>
-          {lang==="kr" ? (<>직접 만든 <br /><span style={{color:"var(--fg3)"}}>다섯 개의 우주</span></>) : (<>自分で作った<br /><span style={{color:"var(--fg3)"}}>五つの宇宙</span></>)}
+          {lang==="kr" ? (<>직접 만든 <br /><span style={{color:"var(--fg3)"}}>여섯 개의 우주</span></>) : (<>自分で作った<br /><span style={{color:"var(--fg3)"}}>六つの宇宙</span></>)}
         </h2>
-        <p style={{fontFamily:"var(--serif)",fontSize:13,color:"var(--fg2)",marginTop:8,letterSpacing:".04em"}}>{lang==="kr" ? "自分で作った五つの宇宙" : "직접 만든 다섯 개의 우주"}</p>
+        <p style={{fontFamily:"var(--serif)",fontSize:13,color:"var(--fg2)",marginTop:8,letterSpacing:".04em"}}>{lang==="kr" ? "自分で作った六つの宇宙" : "직접 만든 여섯 개의 우주"}</p>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:18,maxWidth:1280,margin:"0 auto"}}>
         {PROJECTS.map((p,i)=><ProjectCard key={p.title} p={p} delay={i*.08} idx={i}/>)}
