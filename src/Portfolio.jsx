@@ -497,7 +497,7 @@ function StatsBar({ lang }) {
     { num: "~10k", label: "Lines of Code" },
     { num: "2", label: "Languages (KR/JA)" },
   ] : [
-    { num: "4+", label: "Reactプロジェクト" },
+    { num: "5+", label: "Webプロジェクト" },
     { num: "3", label: "リリース済みアプリ" },
     { num: "~10k", label: "コード行数" },
     { num: "2", label: "言語 (KR/JA)" },
@@ -544,6 +544,7 @@ if (bond >= 15 && Math.random() < 0.25)
     title:"Project Genesis",
     ja:"ニューラル同期コア",
     sub:"사이버펑크 ARG · サイバーパンクARG",
+    link:"https://pgenesis.netlify.app/",
     problem:"7개 페이즈가 비선형으로 진행되는데, 카르마 분기까지 들어가니까 어디서 뭐가 터질지 모르는 상태가 된다.",
     solution:"FSM(유한 상태 머신) 패턴을 처음 써봤다. Context API로 페이즈랑 카르마를 한 곳에서 관리하니까 머리가 좀 맑아졌다.",
     result:"카르마 기반 2종 엔딩 분기 + 암호 해제 시스템까지. 처음으로 '이거 게임이다' 싶었다.",
@@ -560,6 +561,7 @@ case "UNLOCK":
     title:"DeadZone II",
     ja:"最終後127日",
     sub:"좀비 서바이버 · ゾンビサバイバル",
+    link:"https://deadsignalarg.netlify.app/",
     problem:"좀비 20마리만 넘어가면 프레임이 지옥이 된다. Canvas 위에서 AI·시야·소리 전파를 동시에 돌리면 당연한 결과긴 하는데…",
     solution:"공간 분할이라는 걸 알게 되고 눈이 세상이 달라졌다. 시야 체크 최적화 넣으니까 60fps가 살아났다.",
     result:"Fog of War + 낮/밤 사이클까지 넣었는데, 밤에 좀비 소리만 들리는 그 느낌이 좋았다.",
@@ -576,6 +578,7 @@ if (dist < FOG_BASE && lineOfSight(z, p)) {
     title:"Setanta Rising",
     ja:"少年は英雄になれるか",
     sub:"성장 시뮬레이션 · 育成シミュレーション",
+    link:"https://setamaker.netlify.app/",
     problem:"훈련·전투·애정·NPC 대화… 시스템이 4개 넘어가니까 스파게티가 된다. 하나 고치면 다른 데서 터지는 그 악순환.",
     solution:"시스템마다 커스텀 훅으로 떼어내고, 하나의 디스패치로 연결했다. 분리하면서 통합한다는 게 이런 거구나 싶었다.",
     result:"60일 육성 + 10종 엔딩 + NG+까지. 이건 진짜 내가 하고 싶은 게임이었다.",
@@ -587,9 +590,28 @@ Object.entries(TRAINING[choice]).forEach(
     setStats(s => ({...s, [stat]: s[stat]+delta}))
 );`,
   },
+  {
+    icon:"📄", color:"#38BDF8",
+    title:"Live Platform LP",
+    ja:"ランディングページ設計",
+    sub:"서비스 LP 디자인 · サービスLPデザイン",
+    link:"/showcase/live-lp-kr.html",
+    problem:"실제 서비스 와이어프레임을 HTML/CSS 단일 파일로 구현해야 했다. 디자이너 없이 기획부터 퍼블리싱까지 혼자.",
+    solution:"iPhone 목업, CSS 애니메이션, 반응형 레이아웃까지 순수 HTML/CSS로 완성. JS 없이도 인터랙션이 살아있다.",
+    result:"JP/KR 2개 언어 LP 완성. 히어로·기능·상세·크리에이터·안전·FAQ 풀 섹션 구성.",
+    tags:["HTML/CSS","Responsive","Animation","Wireframe","Bilingual"],
+    snippet:`/* iPhone mockup — pure CSS */
+.iphone-mockup {
+  border-radius: 45px;
+  box-shadow: 0 0 0 10px #2d2d2d,
+    0 0 0 12px #444,
+    0 30px 60px rgba(0,0,0,0.5);
+  transform: rotate(-3deg);
+}`,
+  },
 ];
 
-const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨"];
+const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네"];
 
 function ProjectCard({ p, delay=0, idx=0 }) {
   const ref = useReveal();
@@ -618,7 +640,9 @@ function ProjectCard({ p, delay=0, idx=0 }) {
           <div style={{fontFamily:"var(--serif)",fontSize:11,color:"var(--fg3)",textAlign:"right",letterSpacing:".04em",lineHeight:1.6}}>{p.ja}</div>
         </div>
 
-        <h3 style={{fontFamily:"var(--sans)",fontSize:21,fontWeight:800,color:"#fff",letterSpacing:"-.02em",marginBottom:3}}>{p.title}</h3>
+        <h3 style={{fontFamily:"var(--sans)",fontSize:21,fontWeight:800,color:"#fff",letterSpacing:"-.02em",marginBottom:3}}>
+          {p.link ? <a href={p.link} target="_blank" rel="noopener noreferrer" style={{color:"inherit",textDecoration:"none"}}>{p.title} ↗</a> : p.title}
+        </h3>
         <p style={{fontFamily:"var(--serif)",fontSize:12,color:p.color,marginBottom:14,opacity:.85,letterSpacing:".04em"}}>{p.sub}</p>
 
         <div style={{marginBottom:14,display:"flex",flexDirection:"column",gap:8}}>
@@ -662,9 +686,9 @@ function ProjectsSection({ lang }) {
       <div ref={ref} className="reveal" style={{marginBottom:52}}>
         <div style={{fontFamily:"var(--mono)",fontSize:10,letterSpacing:".2em",color:"var(--b)",marginBottom:10,textTransform:"uppercase"}}>{lang==="kr" ? "Selected Works · 作品集" : "作品集 · Selected Works"}</div>
         <h2 style={{fontFamily:"var(--sans)",fontSize:"clamp(36px,5.5vw,68px)",fontWeight:800,letterSpacing:"-.03em",lineHeight:.97,color:"#fff"}}>
-          {lang==="kr" ? (<>React로 만든 <br /><span style={{color:"var(--fg3)"}}>네 개의 우주</span></>) : (<>Reactで作った<br /><span style={{color:"var(--fg3)"}}>四つの宇宙</span></>)}
+          {lang==="kr" ? (<>직접 만든 <br /><span style={{color:"var(--fg3)"}}>다섯 개의 우주</span></>) : (<>自分で作った<br /><span style={{color:"var(--fg3)"}}>五つの宇宙</span></>)}
         </h2>
-        <p style={{fontFamily:"var(--serif)",fontSize:13,color:"var(--fg2)",marginTop:8,letterSpacing:".04em"}}>{lang==="kr" ? "Reactで作った四つの宇宙" : "React로 만든 네 개의 우주"}</p>
+        <p style={{fontFamily:"var(--serif)",fontSize:13,color:"var(--fg2)",marginTop:8,letterSpacing:".04em"}}>{lang==="kr" ? "自分で作った五つの宇宙" : "직접 만든 다섯 개의 우주"}</p>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:18,maxWidth:1280,margin:"0 auto"}}>
         {PROJECTS.map((p,i)=><ProjectCard key={p.title} p={p} delay={i*.08} idx={i}/>)}
@@ -1051,7 +1075,7 @@ function ContactSection({ mode, lang }) {
             {lang==="kr" ? "一緒に世界を作りましょう" : "같이 세계를 만들어볼까요?"}
           </p>
           <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
-            <a data-h href="mailto:occultai.dev@gmail.com" style={{
+            <a data-h href="mailto:behelitlee@gmail.com" style={{
               display:"inline-flex",alignItems:"center",gap:8,padding:"13px 26px",borderRadius:100,
               border: isOccult ? "1px solid rgba(0,255,0,.4)" : "1px solid rgba(108,95,255,.4)",
               background: isOccult ? "rgba(0,255,0,.08)" : "rgba(108,95,255,.12)",
@@ -1067,7 +1091,7 @@ function ContactSection({ mode, lang }) {
             }}>
               → GitHub
             </a>
-            <a data-h href="https://play.google.com/store/apps/dev?id=OccultAI" target="_blank" rel="noopener noreferrer" style={{
+            <a data-h href="https://play.google.com/store/apps/dev?id=6475761966907902838" target="_blank" rel="noopener noreferrer" style={{
               display:"inline-flex",alignItems:"center",gap:8,padding:"13px 26px",borderRadius:100,
               border:"1px solid var(--line)",background:"rgba(255,255,255,.03)",
               color:"var(--fg2)",fontFamily:"var(--mono)",fontSize:12,letterSpacing:".08em",cursor:"pointer",textDecoration:"none",transition:"all .25s",
