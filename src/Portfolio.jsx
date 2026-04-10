@@ -644,9 +644,24 @@ const totalOil = lye / (avgSAP * (1 - superfat / 100));
 if (conc > 40)
   warn("🚨 과열·화산 현상 위험!");`,
   },
+  {
+    icon:"◈", color:"#a78bfa",
+    title:"VOID//BREAK",
+    ja:"ヴォイドブレイク",
+    sub:"마이크로 아케이드 · マイクロアーケード",
+    link:"/showcase/void_break.html",
+    problem:"포트폴리오에 '직접 플레이할 수 있는 뭔가'가 없으면 밋밋하다. 근데 게임 하나 넣자고 프레임워크를 쓰긴 싫었다.",
+    solution:"Canvas API + Vanilla JS 단일 파일. 자동 사격, 웨이브 시스템, 콤보, 파티클, 화면 흔들림까지 넣었다.",
+    result:"200줄대 JS로 60fps 네온 슈터 완성. 포트폴리오 방문자가 5분은 더 머무르게 되었다(아마도).",
+    tags:["Canvas API","60fps","Particles","Touch"],
+    snippet:`// 콤보 보너스 — 연속 처치 시 점수 배율
+score += e.pts * (1 + comboCount * 0.1);
+// 화면 흔들림 — 타격감의 핵심
+shakeTimer = 6; shakeIntensity = 3;`,
+  },
 ];
 
-const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네","685줄에 다 넣음","비누 만들다 만듦"];
+const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네","685줄에 다 넣음","비누 만들다 만듦","60fps가 정의다"];
 
 function ProjectCard({ p, delay=0, idx=0 }) {
   const ref = useReveal();
