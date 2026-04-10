@@ -725,9 +725,9 @@ function ProjectsSection({ lang }) {
       <div ref={ref} className="reveal" style={{marginBottom:52}}>
         <div style={{fontFamily:"var(--mono)",fontSize:10,letterSpacing:".2em",color:"var(--b)",marginBottom:10,textTransform:"uppercase"}}>{lang==="kr" ? "Selected Works · 作品集" : "作品集 · Selected Works"}</div>
         <h2 style={{fontFamily:"var(--sans)",fontSize:"clamp(36px,5.5vw,68px)",fontWeight:800,letterSpacing:"-.03em",lineHeight:.97,color:"#fff"}}>
-          {lang==="kr" ? (<>직접 만든 <br /><span style={{color:"var(--fg3)"}}>여섯 개의 우주</span></>) : (<>自分で作った<br /><span style={{color:"var(--fg3)"}}>六つの宇宙</span></>)}
+          {lang==="kr" ? (<>직접 만든 <br /><span style={{color:"var(--fg3)"}}>{PROJECTS.length}개의 우주</span></>) : (<>自分で作った<br /><span style={{color:"var(--fg3)"}}>{PROJECTS.length}つの宇宙</span></>)}
         </h2>
-        <p style={{fontFamily:"var(--serif)",fontSize:13,color:"var(--fg2)",marginTop:8,letterSpacing:".04em"}}>{lang==="kr" ? "自分で作った六つの宇宙" : "직접 만든 여섯 개의 우주"}</p>
+        <p style={{fontFamily:"var(--serif)",fontSize:13,color:"var(--fg2)",marginTop:8,letterSpacing:".04em"}}>{lang==="kr" ? `自分で作った${PROJECTS.length}つの宇宙` : `직접 만든 ${PROJECTS.length}개의 우주`}</p>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:18,maxWidth:1280,margin:"0 auto"}}>
         {PROJECTS.map((p,i)=><ProjectCard key={p.title} p={p} delay={i*.08} idx={i}/>)}
