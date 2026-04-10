@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>四柱 DEMO — 일주 간명기</title>
+<style>
+:root{--bg:#0a0a12;--card:#12121e;--line:rgba(255,255,255,.06);--fg:#e0e0e0;--fg2:rgba(255,255,255,.4);--accent:#a78bfa;--accent2:#3dffb0;--fire:#ff5c8a;--water:#4fc3f7;--wood:#3dffb0;--metal:#e0e0e0;--earth:#ffb347}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:'Pretendard','Malgun Gothic',sans-serif;min-height:100vh;overflow-x:hidden}
+.mono{font-family:'Courier New',monospace}
+
+/* header */
+header{text-align:center;padding:60px 24px 20px}
+header h1{font-size:clamp(28px,5vw,44px);font-weight:900;letter-spacing:-.02em;color:#fff}
+header h1 span{color:var(--accent)}
+header .sub{font-size:11px;color:var(--fg2);letter-spacing:.2em;margin-top:6px;text-transform:uppercase}
+.demo-badge{display:inline-block;margin-top:14px;padding:5px 14px;border-radius:100px;border:1px solid rgba(167,139,250,.3);background:rgba(167,139,250,.08);font-size:11px;color:var(--accent);letter-spacing:.12em}
+
+/* input section */
+.input-section{max-width:400px;margin:32px auto;padding:0 24px}
+.input-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 24px;text-align:center}
+.input-card label{display:block;font-size:13px;color:var(--fg2);margin-bottom:12px;letter-spacing:.08em}
+.date-row{display:flex;gap:10px;justify-content:center;align-items:center}
+.date-row select,.date-row input{background:rgba(255,255,255,.05);border:1px solid var(--line);color:#fff;padding:12px 14px;border-radius:10px;font-size:16px;font-family:inherit;text-align:center;-webkit-appearance:none}
+.date-row select{min-width:90px}
+.date-row input{width:70px}
+.date-row select:focus,.date-row input:focus{outline:none;border-color:var(--accent)}
+.btn{display:block;width:100%;margin-top:20px;padding:14px;background:linear-gradient(135deg,rgba(167,139,250,.15),rgba(61,255,176,.1));border:1px solid rgba(167,139,250,.3);border-radius:12px;color:var(--accent);font-size:15px;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:all .25s}
+.btn:hover{background:linear-gradient(135deg,rgba(167,139,250,.25),rgba(61,255,176,.18));border-color:var(--accent);box-shadow:0 0 24px rgba(167,139,250,.15)}
+
+/* result */
+.result{max-width:520px;margin:0 auto;padding:0 24px 60px;display:none}
+.result.show{display:block;animation:fadeUp .6s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.pillar-display{text-align:center;margin-bottom:28px}
+.pillar-chars{display:flex;justify-content:center;gap:12px;margin-bottom:12px}
+.pillar-char{width:72px;height:88px;background:var(--card);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.pillar-char::before{content:'';position:absolute;inset:0;opacity:.08;border-radius:14px}
+.pillar-char .hanzi{font-size:32px;font-weight:900;line-height:1}
+.pillar-char .label{font-size:10px;color:var(--fg2);margin-top:4px;letter-spacing:.1em}
+.element-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:100px;font-size:13px;font-weight:600;letter-spacing:.06em;margin-top:8px}
+
+.section-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;margin-bottom:14px}
+.section-card h3{font-size:13px;color:var(--fg2);letter-spacing:.15em;margin-bottom:14px;text-transform:uppercase}
+.trait-tags{display:flex;flex-wrap:wrap;gap:8px}
+.trait-tag{padding:7px 14px;border-radius:100px;font-size:13px;font-weight:500;letter-spacing:.04em}
+.strength-weakness{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sw-box{padding:14px;border-radius:12px;font-size:13px;line-height:1.6}
+.sw-box .sw-label{font-size:10px;letter-spacing:.15em;margin-bottom:6px;text-transform:uppercase}
+.sw-box.str{background:rgba(61,255,176,.06);border:1px solid rgba(61,255,176,.12)}
+.sw-box.str .sw-label{color:var(--accent2)}
+.sw-box.wk{background:rgba(255,92,138,.06);border:1px solid rgba(255,92,138,.12)}
+.sw-box.wk .sw-label{color:var(--fire)}
+.tone-box{font-size:14px;line-height:1.7;color:rgba(255,255,255,.7);padding:4px 0}
+.element-style{font-size:13px;line-height:1.8;color:rgba(255,255,255,.6)}
+.element-style span{color:var(--accent);font-weight:600}
+
+/* app promo */
+.promo{max-width:520px;margin:0 auto 40px;padding:0 24px}
+.promo-card{background:linear-gradient(135deg,rgba(167,139,250,.06),rgba(61,255,176,.04));border:1px dashed rgba(167,139,250,.2);border-radius:16px;padding:24px;text-align:center}
+.promo-card .icon{font-size:28px;margin-bottom:10px}
+.promo-card h3{font-size:15px;color:#fff;margin-bottom:6px}
+.promo-card p{font-size:12px;color:var(--fg2);line-height:1.7}
+.promo-card .coming{display:inline-block;margin-top:12px;padding:5px 14px;border-radius:100px;border:1px solid rgba(255,92,138,.3);background:rgba(255,92,138,.08);font-size:10px;color:var(--fire);letter-spacing:.15em}
+
+/* footer */
+footer{text-align:center;padding:20px;font-size:10px;color:var(--fg2);letter-spacing:.1em;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>四柱 <span>DEMO</span></h1>
+  <div class="sub">일주 간명기 · 日柱簡命器</div>
+  <div class="demo-badge">DEMO — 정식판은 모바일 앱으로 준비 중</div>
+</header>
+
+<div class="input-section">
+  <div class="input-card">
+    <label>양력 생년월일을 입력하세요</label>
+    <div class="date-row">
+      <input type="number" id="inYear" placeholder="YYYY" min="1920" max="2030" value="1990">
+      <select id="inMonth"></select>
+      <select id="inDay"></select>
+    </div>
+    <button class="btn" onclick="calculate()">간명하기</button>
+  </div>
+</div>
+
+<div class="result" id="resultArea">
+  <div class="pillar-display" id="pillarDisplay"></div>
+  <div id="resultCards"></div>
+</div>
+
+<div class="promo" id="promoArea" style="display:none">
+  <div class="promo-card">
+    <div class="icon">📱</div>
+    <h3>정식판 앱에서는 더 많은 것을 볼 수 있어요</h3>
+    <p>
+      사주 + 타로 연동 해석 · 시주(시간)까지 포함한 사주팔자 완전 분석<br>
+      오행 상생/상극 관계 시각화 · AI 맞춤 상담
+    </p>
+    <span class="coming">COMING SOON</span>
+  </div>
+</div>
+
+<footer>四柱 DEMO · by Behelit — 정식판 모바일 앱 개발 중</footer>
+
+<script>
+// ── data ──
+const STEMS = ["갑","을","병","정","무","기","경","신","임","계"];
+const BRANCHES = ["자","축","인","묘","진","사","오","미","신","유","술","해"];
+const STEM_EL = {갑:"목",을:"목",병:"화",정:"화",무:"토",기:"토",경:"금",신:"금",임:"수",계:"수"};
+const BRANCH_EL = {자:"수",축:"토",인:"목",묘:"목",진:"토",사:"화",오:"화",미:"토",신:"금",유:"금",술:"토",해:"수"};
+const EL_EMOJI = {목:"🌿",화:"🔥",토:"🪨",금:"⚔",수:"💧"};
+const EL_COLOR = {목:"#3dffb0",화:"#ff5c8a",토:"#ffb347",금:"#e0e0e0",수:"#4fc3f7"};
+const EL_EN = {목:"WOOD",화:"FIRE",토:"EARTH",금:"METAL",수:"WATER"};
+
+const EL_STYLES = {
+  목:{특징:"성장, 확장, 창의성",키워드:"성장 · 발전 · 기회 · 새로움 · 확장"},
+  화:{특징:"열정, 표현, 사교성",키워드:"열정 · 사랑 · 표현 · 빛 · 밝음"},
+  토:{특징:"안정, 신뢰, 포용",키워드:"안정 · 기반 · 신뢰 · 실질 · 완성"},
+  금:{특징:"정의, 분석, 완결",키워드:"정의 · 명확 · 정리 · 결정 · 완벽"},
+  수:{특징:"지혜, 유연, 직관",키워드:"지혜 · 직관 · 흐름 · 깊이 · 변화"},
+};
+
+const PILLARS = {
+  "갑자":{el:"목-수",p:["리더십","독립심","직진","창의적"],tone:"직설적이고 명확한 조언. 결단력 강조",str:"강한 추진력과 시작하는 힘",wk:"조급함, 독단적 경향"},
+  "을축":{el:"목-토",p:["섬세함","신중함","완벽주의","분석적"],tone:"부드럽고 깊이 있는 조언. 신중함 강조",str:"꼼꼼한 분석력과 인내심",wk:"우유부단함, 지나친 걱정"},
+  "병인":{el:"화-목",p:["열정적","표현력","사교적","낙천적"],tone:"따뜻하고 공감적. 열정 고취",str:"뛰어난 소통 능력과 긍정성",wk:"경솔함, 일관성 부족"},
+  "정묘":{el:"화-목",p:["온화함","예술적","감수성","배려"],tone:"부드럽고 예술적. 균형 강조",str:"풍부한 감성과 공감 능력",wk:"결단력 부족, 우울 경향"},
+  "무진":{el:"토-토",p:["안정","신뢰","현실적","책임감"],tone:"현실적이고 구체적. 안정성 강조",str:"든든한 기반과 성실함",wk:"변화 거부, 고집"},
+  "기사":{el:"토-화",p:["포용력","중재","조화","인내"],tone:"차근차근 단계적. 조화 추구",str:"중재 능력과 포용력",wk:"우유부단함, 자기희생"},
+  "경오":{el:"금-화",p:["정의감","명확함","결단력","원칙적"],tone:"직설적이고 명료. 원칙 강조",str:"명확한 판단력과 정의감",wk:"완고함, 융통성 부족"},
+  "신미":{el:"금-토",p:["세련됨","정밀함","분석적","완벽추구"],tone:"정교하고 분석적. 완성도 강조",str:"정밀한 작업 능력",wk:"비판적, 까다로움"},
+  "임신":{el:"수-금",p:["지혜","유연함","직관","적응력"],tone:"사려 깊고 탐구적. 직관 강조",str:"뛰어난 적응력과 통찰력",wk:"불안정함, 변덕"},
+  "계유":{el:"수-금",p:["예민함","심미안","비판적","깊이"],tone:"깊이 있고 비판적. 진실 추구",str:"예리한 통찰력",wk:"지나친 비판, 외로움"},
+  "갑술":{el:"목-토",p:["포부","이상주의","리더십","독립"],tone:"도전적이고 이상적. 큰 그림 강조",str:"높은 이상과 추진력",wk:"현실성 부족"},
+  "을해":{el:"목-수",p:["부드러움","적응력","감성","배려"],tone:"부드럽고 감성적. 흐름 강조",str:"뛰어난 적응력",wk:"자기주장 약함"},
+  "병자":{el:"화-수",p:["열정","변화","활동성","충동"],tone:"역동적이고 활발. 행동 촉구",str:"빠른 행동력",wk:"충동적, 일관성 부족"},
+  "정축":{el:"화-토",p:["온화","성실","인내","신뢰"],tone:"온화하고 성실. 인내 강조",str:"꾸준한 노력",wk:"느림, 변화 회피"},
+  "무인":{el:"토-목",p:["포용","안정추구","실질적","지구력"],tone:"실질적이고 안정적. 기반 구축 강조",str:"든든한 기반",wk:"보수적"},
+  "기묘":{el:"토-목",p:["세심함","배려","조화","중재"],tone:"섬세하고 배려적. 관계 강조",str:"뛰어난 중재 능력",wk:"자기희생 경향"},
+  "경진":{el:"금-토",p:["명확함","원칙","책임감","리더십"],tone:"명확하고 원칙적. 책임 강조",str:"강한 책임감",wk:"경직됨"},
+  "신사":{el:"금-화",p:["예리함","열정","변혁","날카로움"],tone:"날카롭고 변혁적. 변화 촉구",str:"변혁의 힘",wk:"극단적 경향"},
+  "임오":{el:"수-화",p:["유연함","직관","변화","지혜"],tone:"유연하고 직관적. 변화 수용 강조",str:"뛰어난 직관력",wk:"불안정함"},
+  "계미":{el:"수-토",p:["깊이","사색","예술성","내향"],tone:"깊이 있고 철학적. 내면 탐구",str:"깊은 사색 능력",wk:"소극적, 우울"},
+  "갑신":{el:"목-금",p:["도전","개척","강인함","독립"],tone:"강인하고 도전적. 극복 강조",str:"강한 극복 의지",wk:"충돌 경향"},
+  "을유":{el:"목-금",p:["세련","섬세","예술","감각"],tone:"세련되고 감각적. 아름다움 추구",str:"뛰어난 미적 감각",wk:"예민함, 취약함"},
+  "병술":{el:"화-토",p:["열정","안정추구","성실","책임"],tone:"열정적이고 안정적. 완성 강조",str:"열정과 안정의 조화",wk:"과로 경향"},
+  "정해":{el:"화-수",p:["온화","지혜","감성","직관"],tone:"온화하고 지혜로운. 내면 강조",str:"풍부한 감성과 지혜",wk:"우유부단함"},
+  "무자":{el:"토-수",p:["포용","융통성","실용","적응"],tone:"포용적이고 실용적. 융합 강조",str:"뛰어난 포용력",wk:"원칙 부족"},
+  "기축":{el:"토-토",p:["성실","신중","인내","책임"],tone:"성실하고 신중. 지속 강조",str:"끈기와 인내",wk:"완고함"},
+  "경인":{el:"금-목",p:["강직","정의","개혁","변혁"],tone:"강직하고 정의로운. 개혁 강조",str:"강한 정의감",wk:"경직성, 완고함"},
+  "신묘":{el:"금-목",p:["예리","분석","비판","세련"],tone:"예리하고 분석적. 정확성 강조",str:"날카로운 분석력",wk:"비판적, 차가움"},
+  "임진":{el:"수-토",p:["지혜","융통","변화","적응"],tone:"지혜롭고 융통적. 변화 수용",str:"뛰어난 적응력",wk:"일관성 부족"},
+  "계사":{el:"수-화",p:["직관","예술","감성","영감"],tone:"직관적이고 예술적. 영감 강조",str:"풍부한 영감",wk:"현실성 부족, 산만함"},
+  "갑오":{el:"목-화",p:["활발","열정","창의","리더십"],tone:"활발하고 창의적. 표현 강조",str:"창의적 표현력",wk:"산만함, 조급함"},
+  "을미":{el:"목-토",p:["온화","배려","인내","헌신"],tone:"온화하고 배려적. 헌신 강조",str:"뛰어난 헌신성",wk:"자기희생 과다"},
+  "병신":{el:"화-금",p:["열정","변혁","창의","독특"],tone:"열정적이고 변혁적. 독창성 강조",str:"독창적 창의력",wk:"불안정함, 충동"},
+  "정유":{el:"화-금",p:["세련","예술","감각","매력"],tone:"세련되고 매력적. 아름다움 추구",str:"뛰어난 매력과 감각",wk:"허영심, 산만함"},
+  "무술":{el:"토-토",p:["성실","책임","안정","실질"],tone:"성실하고 실질적. 기반 강조",str:"든든한 실행력",wk:"융통성 부족"},
+  "기해":{el:"토-수",p:["포용","유연","조화","중재"],tone:"포용적이고 조화로운. 균형 강조",str:"뛰어난 균형 감각",wk:"우유부단함"},
+  "경자":{el:"금-수",p:["명확","지혜","냉철","분석"],tone:"명확하고 냉철. 분석 강조",str:"날카로운 판단력",wk:"차가움, 고립"},
+  "신축":{el:"금-토",p:["완벽","정밀","책임","신중"],tone:"정밀하고 신중. 완벽 추구",str:"정확한 실행력",wk:"융통성 부족, 스트레스"},
+  "임인":{el:"수-목",p:["지혜","성장","발전","학습"],tone:"지혜롭고 발전적. 성장 강조",str:"끊임없는 성장",wk:"방황, 불안"},
+  "계묘":{el:"수-목",p:["예민","예술","감수성","섬세"],tone:"섬세하고 예술적. 감성 강조",str:"풍부한 감수성",wk:"예민함, 취약함"},
+  "갑진":{el:"목-토",p:["포부","리더십","안정추구","책임"],tone:"포부 있고 책임감 있는. 완성 강조",str:"높은 목표 설정과 실행",wk:"과도한 책임감"},
+  "을사":{el:"목-화",p:["온화","열정","표현","예술"],tone:"온화하고 예술적. 표현 강조",str:"조화로운 표현력",wk:"우유부단함, 과민"},
+  "병오":{el:"화-화",p:["열정","밝음","사교","낙천"],tone:"열정적이고 밝은. 에너지 분출",str:"무한한 열정",wk:"과열, 소진"},
+  "정미":{el:"화-토",p:["온화","인내","배려","헌신"],tone:"온화하고 헌신적. 지속 강조",str:"끈기 있는 배려",wk:"자기희생 과다"},
+  "무신":{el:"토-금",p:["안정","정밀","책임","완벽"],tone:"안정적이고 정밀. 완성도 강조",str:"체계적 실행력",wk:"경직됨"},
+  "기유":{el:"토-금",p:["섬세","세련","완벽추구","예술"],tone:"섬세하고 세련된. 완벽 추구",str:"뛰어난 미적 감각",wk:"비판적, 까다로움"},
+  "경술":{el:"금-토",p:["정의","책임","원칙","리더십"],tone:"정의롭고 원칙적. 책임 강조",str:"강한 책임감",wk:"완고함, 융통성 부족"},
+  "신해":{el:"금-수",p:["예리","지혜","직관","분석"],tone:"예리하고 지혜로운. 직관 강조",str:"날카로운 통찰",wk:"비판적, 고독"},
+  "임자":{el:"수-수",p:["지혜","유연","직관","깊이"],tone:"지혜롭고 깊이 있는. 흐름 강조",str:"깊은 통찰력",wk:"불안정함, 우울"},
+  "계축":{el:"수-토",p:["사색","신중","내향","깊이"],tone:"사색적이고 신중. 내면 탐구",str:"깊은 사유 능력",wk:"소극적, 우울 경향"},
+};
+
+// ── calculation ──
+function calcDayPillar(year, month, day) {
+  const base = new Date(1900, 0, 1);
+  const target = new Date(year, month - 1, day);
+  const diff = Math.round((target - base) / 86400000);
+  let idx = ((diff % 60) + 10) % 60;
+  if (idx < 0) idx += 60;
+  return STEMS[idx % 10] + BRANCHES[idx % 12];
+}
+
+// ── UI setup ──
+const monthSel = document.getElementById('inMonth');
+const daySel = document.getElementById('inDay');
+for (let m = 1; m <= 12; m++) monthSel.innerHTML += `<option value="${m}">${m}월</option>`;
+function fillDays() {
+  const y = +document.getElementById('inYear').value || 2000;
+  const m = +monthSel.value;
+  const maxD = new Date(y, m, 0).getDate();
+  const cur = +daySel.value;
+  daySel.innerHTML = '';
+  for (let d = 1; d <= maxD; d++) daySel.innerHTML += `<option value="${d}" ${d===cur?'selected':''}>${d}일</option>`;
+}
+monthSel.addEventListener('change', fillDays);
+document.getElementById('inYear').addEventListener('change', fillDays);
+monthSel.value = 5; fillDays(); daySel.value = 15;
+
+// ── calculate & render ──
+function calculate() {
+  const y = +document.getElementById('inYear').value;
+  const m = +monthSel.value;
+  const d = +daySel.value;
+  if (y < 1920 || y > 2030) { alert('연도를 확인해주세요 (1920~2030)'); return; }
+
+  const pillar = calcDayPillar(y, m, d);
+  const data = PILLARS[pillar];
+  if (!data) { alert('데이터를 찾을 수 없습니다: ' + pillar); return; }
+
+  const stem = pillar[0], branch = pillar[1];
+  const stemEl = STEM_EL[stem], branchEl = BRANCH_EL[branch];
+  const dominantEl = stemEl;
+  const c = EL_COLOR[dominantEl];
+  const elStyle = EL_STYLES[dominantEl];
+
+  // pillar display
+  document.getElementById('pillarDisplay').innerHTML = `
+    <div class="pillar-chars">
+      <div class="pillar-char" style="border-color:${EL_COLOR[stemEl]}20">
+        <div class="hanzi" style="color:${EL_COLOR[stemEl]}">${stem}</div>
+        <div class="label">천간 ${EL_EMOJI[stemEl]} ${stemEl}</div>
+      </div>
+      <div class="pillar-char" style="border-color:${EL_COLOR[branchEl]}20">
+        <div class="hanzi" style="color:${EL_COLOR[branchEl]}">${branch}</div>
+        <div class="label">지지 ${EL_EMOJI[branchEl]} ${branchEl}</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:var(--fg2);margin-bottom:6px">${y}년 ${m}월 ${d}일의 일주</div>
+    <div class="element-badge" style="background:${c}12;border:1px solid ${c}30;color:${c}">
+      ${EL_EMOJI[dominantEl]} ${dominantEl} (${EL_EN[dominantEl]}) · ${data.el}
+    </div>
+  `;
+
+  // result cards
+  document.getElementById('resultCards').innerHTML = `
+    <div class="section-card">
+      <h3>성격 특성</h3>
+      <div class="trait-tags">
+        ${data.p.map(t => `<span class="trait-tag" style="background:${c}12;color:${c};border:1px solid ${c}20">${t}</span>`).join('')}
+      </div>
+    </div>
+    <div class="section-card">
+      <h3>강점 / 약점</h3>
+      <div class="strength-weakness">
+        <div class="sw-box str"><div class="sw-label">강점</div>${data.str}</div>
+        <div class="sw-box wk"><div class="sw-label">약점</div>${data.wk}</div>
+      </div>
+    </div>
+    <div class="section-card">
+      <h3>조언 성향</h3>
+      <div class="tone-box">"${data.tone}"</div>
+    </div>
+    <div class="section-card">
+      <h3>${EL_EMOJI[dominantEl]} ${dominantEl}(${EL_EN[dominantEl]}) 오행 성향</h3>
+      <div class="element-style">
+        <span>특징:</span> ${elStyle.특징}<br>
+        <span>키워드:</span> ${elStyle.키워드}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('resultArea').classList.add('show');
+  document.getElementById('promoArea').style.display = 'block';
+  document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>

@@ -659,9 +659,25 @@ score += e.pts * (1 + comboCount * 0.1);
 // 화면 흔들림 — 타격감의 핵심
 shakeTimer = 6; shakeIntensity = 3;`,
   },
+  {
+    icon:"卜", color:"#a78bfa",
+    title:"四柱 DEMO",
+    ja:"日柱簡命器",
+    sub:"사주 일주 간명기 · 四柱デモ",
+    link:"/showcase/saju_demo.html",
+    problem:"사주 앱을 Flutter로 만들고 있는데, 핵심 로직이 제대로 돌아가는지 웹에서 바로 확인할 수 있는 데모가 필요했다.",
+    solution:"60갑자 전체 데이터를 JS로 포팅하고, 오행 시각화까지 단일 파일로 구현. 정식판의 축약 데모.",
+    result:"양력 생년월일 → 일주·천간·지지·오행·성격 특성 즉시 산출. 모바일 정식판은 개발 중.",
+    tags:["Saju","60갑자","오행","Single File"],
+    snippet:`// 일주 산출 — 1900-01-01 기준 갑술(idx 10)
+const diff = Math.round((target - base) / 86400000);
+let idx = ((diff % 60) + 10) % 60;
+// 천간·지지 분리
+return STEMS[idx % 10] + BRANCHES[idx % 12];`,
+  },
 ];
 
-const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네","685줄에 다 넣음","비누 만들다 만듦","60fps가 정의다"];
+const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네","685줄에 다 넣음","비누 만들다 만듦","60fps가 정의다","운명은 계산된다"];
 
 function ProjectCard({ p, delay=0, idx=0 }) {
   const ref = useReveal();
