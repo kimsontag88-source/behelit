@@ -628,9 +628,25 @@ if (synergy >= 15 && bond >= 8
   // 합동 공격 발동!
 }`,
   },
+  {
+    icon:"🧪", color:"#27ae60",
+    title:"Soap Calculator",
+    ja:"逆算せっけん計算機",
+    sub:"비누 역산 계산기 · 石けん計算機",
+    link:"/showcase/soap_calculator.html",
+    problem:"비누를 직접 만들고 싶었는데, 잿물 양에서 오일량을 역산하는 계산기가 한국어로 제대로 된 게 없었다.",
+    solution:"비화값(SAP) 테이블 40종 넣고, 잿물 농도 시각화 바까지 붙였다. 프리셋도 9종. 필요하니까 만든 거다.",
+    result:"실제로 이걸로 비누 만들었다. 개발자가 비누를 만들면 계산기부터 만든다는 걸 증명함.",
+    tags:["Vanilla JS","Single File","SAP Table","Responsive"],
+    snippet:`// 비화값 기반 역산 — 이 공식 찾는데 반나절
+const totalOil = lye / (avgSAP * (1 - superfat / 100));
+// 농도 체크 — 화산 현상 방지용
+if (conc > 40)
+  warn("🚨 과열·화산 현상 위험!");`,
+  },
 ];
 
-const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네","685줄에 다 넣음"];
+const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네","685줄에 다 넣음","비누 만들다 만듦"];
 
 function ProjectCard({ p, delay=0, idx=0 }) {
   const ref = useReveal();
