@@ -662,22 +662,37 @@ shakeTimer = 6; shakeIntensity = 3;`,
   {
     icon:"卜", color:"#a78bfa",
     title:"四柱 DEMO",
-    ja:"日柱簡命器",
-    sub:"사주 일주 간명기 · 四柱デモ",
+    ja:"四柱八字簡命器",
+    sub:"사주팔자 간명기 · 四柱デモ",
     link:"/showcase/saju_demo.html",
     problem:"사주 앱을 Flutter로 만들고 있는데, 핵심 로직이 제대로 돌아가는지 웹에서 바로 확인할 수 있는 데모가 필요했다.",
-    solution:"60갑자 전체 데이터를 JS로 포팅하고, 오행 시각화까지 단일 파일로 구현. 정식판의 축약 데모.",
-    result:"양력 생년월일 → 일주·천간·지지·오행·성격 특성 즉시 산출. 모바일 정식판은 개발 중.",
-    tags:["Saju","60갑자","오행","Single File"],
-    snippet:`// 일주 산출 — 1900-01-01 기준 갑술(idx 10)
-const diff = Math.round((target - base) / 86400000);
-let idx = ((diff % 60) + 10) % 60;
-// 천간·지지 분리
-return STEMS[idx % 10] + BRANCHES[idx % 12];`,
+    solution:"60갑자 + 년·월·일·시 사주 전체 산출, 오행 분포 차트, 상생/상극 관계까지 단일 파일로 구현.",
+    result:"생년월일시 → 사주팔자 + 오행 분석 + 풀이까지 즉시 산출. 정식판 모바일 앱은 개발 중.",
+    tags:["Saju","60갑자","오행","상생상극"],
+    snippet:`// 사주팔자 — 년주·월주·일주·시주 4기둥
+const yearP = calcYearPillar(y);
+const monthP = calcMonthPillar(yearP.stem, m);
+const dayP = calcDayPillar(y, m, d);
+const hourP = calcHourPillar(dayP.stem, h);`,
+  },
+  {
+    icon:"☣", color:"#ff7a50",
+    title:"DEADZONE II Demo",
+    ja:"最終後127日 デモ",
+    sub:"좀비 서바이벌 데모 · ゾンビサバイバル",
+    link:"/showcase/deadzone_demo.html",
+    problem:"HTML 좀비 생존 게임을 모바일 앱으로 포팅할 예정인데, 핵심 메커니즘을 빠르게 체험할 수 있는 데모가 필요했다.",
+    solution:"BSP 맵 생성, Fog of War, 좀비 AI(시야·추격·배회), 은신, 낮/밤 사이클까지 단일 파일 Canvas로 구현.",
+    result:"'전투보다 생존'이라는 핵심 철학을 데모 하나로 전달. 정식판은 모바일 앱으로 개발 예정.",
+    tags:["Canvas","BSP","Fog of War","Day/Night"],
+    snippet:`// 전투는 가장 쉬운 해답이 되면 안 된다
+// — DEADZONE II 설계 원칙 #1
+if(dist<sightRange && lineOfSight(z,player))
+  z.alerted = true; // 소리가 위치를 알린다`,
   },
 ];
 
-const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네","685줄에 다 넣음","비누 만들다 만듦","60fps가 정의다","운명은 계산된다"];
+const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네","685줄에 다 넣음","비누 만들다 만듦","60fps가 정의다","운명은 계산된다","소음이 적을 부른다"];
 
 function ProjectCard({ p, delay=0, idx=0 }) {
   const ref = useReveal();
