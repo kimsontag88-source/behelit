@@ -79,53 +79,67 @@ let map, rooms, items;
 function genMap() {
   map = Array.from({length:ROWS}, () => Array(COLS).fill(WALL));
   rooms = [];
-  function split(x,y,w,h,depth) {
-    if (depth > 5 || w < 8 || h < 8) {
-      const rx = x+1, ry = y+1, rw = w-2, rh = h-2;
-      if (rw >= 4 && rh >= 4) {
-        rooms.push({x:rx,y:ry,w:rw,h:rh});
-        for (let dy=0;dy<rh;dy++) for (let dx=0;dx<rw;dx++) map[ry+dy][rx+dx] = FLOOR;
+
+  function split(x, y, w, h, depth) {
+    if (depth > 4 || w < 10 || h < 10) {
+      // create room with padding
+      const pad = 1;
+      const rx = x + pad, ry = y + pad;
+      const rw = Math.max(4, w - pad * 2), rh = Math.max(4, h - pad * 2);
+      if (rx + rw <= COLS && ry + rh <= ROWS) {
+        rooms.push({ x: rx, y: ry, w: rw, h: rh });
+        for (let dy = 0; dy < rh; dy++)
+          for (let dx = 0; dx < rw; dx++)
+            if (ry + dy < ROWS && rx + dx < COLS) map[ry + dy][rx + dx] = FLOOR;
       }
       return;
     }
-    if (w > h) {
-      const sx = x + 4 + Math.floor(Math.random()*(w-8));
-      split(x,y,sx-x,h,depth+1);
-      split(sx,y,w-(sx-x),h,depth+1);
-      // corridor
-      const cy = y + Math.floor(h/2);
-      for (let cx=x;cx<x+w;cx++) if (map[cy]) map[cy][cx] = map[cy][cx]===WALL?FLOOR:map[cy][cx];
+    if (w >= h) {
+      const minSplit = Math.min(5, Math.floor(w * 0.3));
+      const maxSplit = Math.max(minSplit + 1, Math.floor(w * 0.7));
+      const sx = x + minSplit + Math.floor(Math.random() * (maxSplit - minSplit));
+      split(x, y, sx - x, h, depth + 1);
+      split(sx, y, x + w - sx, h, depth + 1);
+      // horizontal corridor
+      const cy = y + Math.floor(h / 2);
+      if (cy >= 0 && cy < ROWS)
+        for (let cx = x; cx < x + w && cx < COLS; cx++) map[cy][cx] = FLOOR;
     } else {
-      const sy = y + 4 + Math.floor(Math.random()*(h-8));
-      split(x,y,w,sy-y,depth+1);
-      split(x,sy,w,h-(sy-y),depth+1);
-      const cx = x + Math.floor(w/2);
-      for (let cy=y;cy<y+h;cy++) if (map[cy]) map[cy][cx] = map[cy][cx]===WALL?FLOOR:map[cy][cx];
+      const minSplit = Math.min(5, Math.floor(h * 0.3));
+      const maxSplit = Math.max(minSplit + 1, Math.floor(h * 0.7));
+      const sy = y + minSplit + Math.floor(Math.random() * (maxSplit - minSplit));
+      split(x, y, w, sy - y, depth + 1);
+      split(x, sy, w, y + h - sy, depth + 1);
+      // vertical corridor
+      const cx = x + Math.floor(w / 2);
+      if (cx >= 0 && cx < COLS)
+        for (let cy = y; cy < y + h && cy < ROWS; cy++) map[cy][cx] = FLOOR;
     }
   }
-  split(0,0,COLS,ROWS,0);
+  split(1, 1, COLS - 2, ROWS - 2, 0);
 
   // roads
-  for (let x=0;x<COLS;x++) { if(map[10]) map[10][x]=ROAD; if(map[20]) map[20][x]=ROAD; }
-  for (let y=0;y<ROWS;y++) { map[y][13]=ROAD; map[y][27]=ROAD; }
+  for (let x = 0; x < COLS; x++) { map[10][x] = ROAD; map[20][x] = ROAD; }
+  for (let y = 0; y < ROWS; y++) { map[y][13] = ROAD; map[y][27] = ROAD; }
 
-  // trees & bushes
-  for (let i=0;i<60;i++) {
-    const x=1+Math.floor(Math.random()*(COLS-2)), y=1+Math.floor(Math.random()*(ROWS-2));
-    if (map[y][x]===FLOOR) map[y][x] = Math.random()<0.4 ? BUSH : TREE;
+  // trees & bushes on floor tiles
+  for (let i = 0; i < 50; i++) {
+    const x = 1 + Math.floor(Math.random() * (COLS - 2));
+    const y = 1 + Math.floor(Math.random() * (ROWS - 2));
+    if (map[y][x] === FLOOR) map[y][x] = Math.random() < 0.4 ? BUSH : TREE;
   }
 
   // crates in rooms
   items = [];
   rooms.forEach(r => {
-    const n = 1 + Math.floor(Math.random()*2);
-    for (let i=0;i<n;i++) {
-      const cx = r.x + 1 + Math.floor(Math.random()*(r.w-2));
-      const cy = r.y + 1 + Math.floor(Math.random()*(r.h-2));
-      if (map[cy][cx]===FLOOR) {
+    const n = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < n; i++) {
+      const cx = r.x + Math.floor(Math.random() * r.w);
+      const cy = r.y + Math.floor(Math.random() * r.h);
+      if (cy < ROWS && cx < COLS && map[cy][cx] === FLOOR) {
         map[cy][cx] = CRATE;
         const roll = Math.random();
-        items.push({x:cx,y:cy,type:roll<0.4?'food':roll<0.65?'med':'weapon',picked:false});
+        items.push({ x: cx, y: cy, type: roll < 0.4 ? 'food' : roll < 0.65 ? 'med' : 'weapon', picked: false });
       }
     }
   });
@@ -142,17 +156,28 @@ function showMsg(txt) { $('msg').textContent=txt; $('msg').classList.add('show')
 
 function init() {
   genMap();
-  const r = rooms[Math.floor(Math.random()*rooms.length)];
+  // fallback if BSP fails
+  if (rooms.length === 0) {
+    rooms.push({ x: 5, y: 5, w: 10, h: 8 });
+    for (let dy = 0; dy < 8; dy++) for (let dx = 0; dx < 10; dx++) map[5 + dy][5 + dx] = FLOOR;
+  }
+  const r = rooms[Math.floor(Math.random() * rooms.length)];
   player = {
-    x:(r.x+r.w/2)*TS, y:(r.y+r.h/2)*TS,
-    hp:100, maxHp:100, stamina:100, food:80,
-    speed:3, stealth:false, attacking:false, atkTimer:0, atkAngle:0,
-    flashTimer:0
+    x: (r.x + Math.floor(r.w / 2)) * TS + TS / 2,
+    y: (r.y + Math.floor(r.h / 2)) * TS + TS / 2,
+    hp: 100, maxHp: 100, stamina: 100, food: 80,
+    speed: 3, stealth: false, attacking: false, atkTimer: 0, atkAngle: 0,
+    flashTimer: 0
   };
+  // ensure player tile is walkable
+  const ptx = Math.floor(player.x / TS), pty = Math.floor(player.y / TS);
+  if (ptx >= 0 && ptx < COLS && pty >= 0 && pty < ROWS) map[pty][ptx] = FLOOR;
+
   zombies = []; particles = [];
-  fog = Array.from({length:ROWS},()=>Array(COLS).fill(true));
-  explored = Array.from({length:ROWS},()=>Array(COLS).fill(false));
-  tick=0; dayTick=0; day=1; isNight=false; kills=0;
+  fog = Array.from({ length: ROWS }, () => Array(COLS).fill(true));
+  explored = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+  tick = 0; dayTick = 0; day = 1; isNight = false; kills = 0;
+  updateFog(); // reveal initial area
   spawnWave(5);
   updateHUD();
 }
@@ -389,6 +414,7 @@ function updateHUD() {
 // ── draw ──
 function draw() {
   ctx.fillStyle='#0a0a0a'; ctx.fillRect(0,0,W,H);
+  if (!player) return;
 
   const camX=player.x-W/2, camY=player.y-H/2;
   ctx.save();
