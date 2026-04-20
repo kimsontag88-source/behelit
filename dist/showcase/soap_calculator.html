@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>역산 비누 계산기 (Reverse Soap Calculator)</title>
+    <style>
+        :root {
+            --primary: #27ae60;
+            --bg-color: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --text-main: #2c3e50;
+            --border: #E1E8ED;
+        }
+        body {
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 5px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .field-gap { margin-bottom: 15px; }
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .radio-group label {
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: #219653; }
+        button.secondary {
+            background-color: #95A5A6;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            padding: 10px;
+        }
+        button.secondary:hover { background-color: #7f8c8d; }
+        .oil-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .oil-row select { margin-bottom: 0; flex: 5; }
+        .oil-row input { margin-bottom: 0; flex: 3; }
+        .remove-btn {
+            background-color: #E74C3C;
+            padding: 12px;
+            flex: 1;
+            white-space: nowrap;
+        }
+        .remove-btn:hover { background-color: #c0392b; }
+        .result-box {
+            background-color: #e9f7ef;
+            border-left: 5px solid var(--primary);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #b2bec3;
+            padding: 10px 0;
+        }
+        .result-item:last-child { border-bottom: none; }
+        .total-row {
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-bottom: none;
+            margin-top: 15px;
+            color: var(--primary);
+        }
+        .summary-box {
+            margin-top: 20px;
+            border-top: 2px solid #dfe6e9;
+            padding-top: 15px;
+            font-size: 0.95rem;
+            color: #2d3436;
+        }
+        .concentration-bar {
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+        }
+        .conc-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .conc-value {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .conc-track {
+            position: relative;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: visible;
+            margin-bottom: 4px;
+        }
+        .conc-safe {
+            position: absolute;
+            height: 100%;
+            background: rgba(39,174,96,0.25);
+            border-radius: 4px;
+        }
+        .conc-marker {
+            position: absolute;
+            top: -4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            border: 2px solid #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            transition: left 0.2s, background-color 0.2s;
+        }
+        .conc-labels {
+            display: flex;
+            justify-content: space-between;
+            color: #95a5a6;
+            font-size: 0.75rem;
+        }
+        .conc-warning {
+            margin-top: 4px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+        .preset-section {
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: #fafbfc;
+        }
+        .preset-section label {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 6px;
+        }
+        .preset-desc {
+            font-size: 0.8rem;
+            color: #95a5a6;
+            margin-top: -2px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🧪 비누 계산기 (잿물 → 오일 역산)</h1>
+
+    <div class="card">
+        <div class="preset-section">
+            <label>📋 1kg 기준 레시피 프리셋 불러오기</label>
+            <p class="preset-desc">선택하면 잿물·물·오일 비율이 한꺼번에 세팅됩니다. 이후 자유롭게 수정 가능!</p>
+            <select id="preset" onchange="loadPreset()" style="margin-bottom:0;">
+                <option value="">직접 입력</option>
+                <optgroup label="🔰 입문자용">
+                    <option value="pure_olive">순수 올리브 (카스틸) — 순하고 부드러운 입문용</option>
+                    <option value="basic_3oil">기본 3종 — 올리브+코코넛+팜 균형형</option>
+                </optgroup>
+                <optgroup label="🧴 보습 중심">
+                    <option value="moisture_rich">고보습 — 시어+아보카도+올리브 중심</option>
+                    <option value="baby_mild">베이비 마일드 — 아기/민감 피부용</option>
+                </optgroup>
+                <optgroup label="🫧 세정 중심">
+                    <option value="cleansing">세정력 강화 — 코코넛+팜 중심</option>
+                    <option value="laundry">세탁비누 — 코코넛 고비율</option>
+                </optgroup>
+                <optgroup label="✨ 특수 레시피">
+                    <option value="shampoo_bar">샴푸바 — 피마자+코코넛 거품형</option>
+                    <option value="horse_oil">마유비누 — 마유+올리브+시어</option>
+                    <option value="luxury">럭셔리 — 아르간+동백+망고버터</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <label>1. 잿물(알칼리) 종류 선택</label>
+        <div class="radio-group">
+            <label><input type="radio" name="lyeType" value="NaOH" checked onchange="updateConcentration()"> 가성소다 (NaOH) - 고체비누</label>
+            <label><input type="radio" name="lyeType" value="KOH" onchange="updateConcentration()"> 가성가리 (KOH) - 물비누</label>
+        </div>
+
+        <label>잿물 투입량 (g)</label>
+        <input type="number" id="lyeAmount" value="100" step="0.1" oninput="updateConcentration()">
+        <div class="field-gap"></div>
+
+        <label>물 투입량 (g)</label>
+        <input type="number" id="waterAmount" value="200" step="0.1" oninput="updateConcentration()">
+
+        <div class="concentration-bar" id="concArea">
+            <div class="conc-display">
+                <span>잿물 수용액 농도</span>
+                <span class="conc-value" id="concValue">--</span>
+            </div>
+            <div class="conc-track">
+                <div class="conc-safe" id="concSafe"></div>
+                <div class="conc-marker" id="concMarker"></div>
+            </div>
+            <div class="conc-labels">
+                <span>0%</span>
+                <span>묽음</span>
+                <span id="concRangeLabel">권장 25~33%</span>
+                <span>진함</span>
+                <span>50%</span>
+            </div>
+            <div class="conc-warning" id="concWarning" style="display:none;"></div>
+        </div>
+
+        <label>슈퍼팻 (Superfat / 디스카운트) (%)</label>
+        <input type="number" id="superfat" value="5" min="0" max="15" step="0.5">
+        <div class="field-gap"></div>
+    </div>
+
+    <div class="card">
+        <label>2. 오일 블렌드 (합계: <span id="totalPercent">0</span>%)</label>
+        <div id="oilContainer"></div>
+        <button type="button" class="secondary" onclick="addOilRow()">+ 오일 직접 추가하기</button>
+    </div>
+
+    <button onclick="calculateSoap()">필요한 오일 계산하기</button>
+
+    <div id="resultArea" style="display: none;" class="card">
+        <h3 style="margin-top: 0; color: #2c3e50;">✅ 계산 결과</h3>
+        <div id="resultContent"></div>
+    </div>
+
+    <script>
+        const sapValues = {
+            "olive":      { name: "올리브 오일",           naoh: 0.135, koh: 0.190, group: "기본 식물유" },
+            "coconut":    { name: "코코넛 오일",           naoh: 0.183, koh: 0.257, group: "기본 식물유" },
+            "palm":       { name: "팜 오일",               naoh: 0.142, koh: 0.199, group: "기본 식물유" },
+            "palmkernel": { name: "팜핵유 (팜커널)",       naoh: 0.178, koh: 0.250, group: "기본 식물유" },
+            "canola":     { name: "카놀라유 (유채유)",      naoh: 0.133, koh: 0.186, group: "기본 식물유" },
+            "sunflower":  { name: "해바라기씨유",          naoh: 0.134, koh: 0.188, group: "기본 식물유" },
+            "castor":     { name: "피마자(캐스터) 오일",    naoh: 0.128, koh: 0.180, group: "기본 식물유" },
+            "ricebran":   { name: "미강유 (쌀겨유)",       naoh: 0.128, koh: 0.180, group: "기본 식물유" },
+            "corn":       { name: "옥수수유",              naoh: 0.136, koh: 0.191, group: "기본 식물유" },
+            "soybean":    { name: "대두유",                naoh: 0.136, koh: 0.191, group: "기본 식물유" },
+            "grapeseed":  { name: "포도씨유",              naoh: 0.127, koh: 0.178, group: "기본 식물유" },
+            "sesame":     { name: "참기름 (세서미)",        naoh: 0.133, koh: 0.187, group: "기본 식물유" },
+            "cottonseed": { name: "면실유",                naoh: 0.139, koh: 0.195, group: "기본 식물유" },
+            "peanut":     { name: "땅콩유",                naoh: 0.136, koh: 0.191, group: "기본 식물유" },
+            "jojoba":     { name: "호호바 오일",           naoh: 0.066, koh: 0.092, group: "고급/특수 오일" },
+            "almond":     { name: "스위트 아몬드 오일",    naoh: 0.136, koh: 0.192, group: "고급/특수 오일" },
+            "avocado":    { name: "아보카도 오일",         naoh: 0.133, koh: 0.187, group: "고급/특수 오일" },
+            "apricot":    { name: "살구씨(아프리콧) 오일", naoh: 0.135, koh: 0.190, group: "고급/특수 오일" },
+            "macadamia":  { name: "마카다미아 오일",       naoh: 0.139, koh: 0.195, group: "고급/특수 오일" },
+            "hemp":       { name: "헴프시드 오일",         naoh: 0.135, koh: 0.190, group: "고급/특수 오일" },
+            "argan":      { name: "아르간 오일",           naoh: 0.136, koh: 0.191, group: "고급/특수 오일" },
+            "camelia":    { name: "동백(카멜리아) 오일",   naoh: 0.136, koh: 0.191, group: "고급/특수 오일" },
+            "rosehip":    { name: "로즈힙 오일",           naoh: 0.138, koh: 0.194, group: "고급/특수 오일" },
+            "meadowfoam": { name: "메도우폼 오일",         naoh: 0.120, koh: 0.169, group: "고급/특수 오일" },
+            "tamanu":     { name: "타마누 오일",           naoh: 0.148, koh: 0.208, group: "고급/특수 오일" },
+            "neem":       { name: "님 오일",               naoh: 0.141, koh: 0.198, group: "고급/특수 오일" },
+            "perilla":    { name: "들기름 (페릴라)",        naoh: 0.136, koh: 0.191, group: "고급/특수 오일" },
+            "walnut":     { name: "호두유",                naoh: 0.135, koh: 0.190, group: "고급/특수 오일" },
+            "wheat_germ": { name: "밀배아(윗점) 오일",     naoh: 0.131, koh: 0.184, group: "고급/특수 오일" },
+            "evening":    { name: "달맞이꽃(이브닝프림로즈) 오일", naoh: 0.136, koh: 0.190, group: "고급/특수 오일" },
+            "borage":     { name: "보리지 오일",           naoh: 0.136, koh: 0.190, group: "고급/특수 오일" },
+            "babassu":    { name: "바바수 오일",           naoh: 0.175, koh: 0.245, group: "고급/특수 오일" },
+            "kukui":      { name: "쿠쿠이넛 오일",        naoh: 0.135, koh: 0.190, group: "고급/특수 오일" },
+            "horse":      { name: "마유 (말기름)",         naoh: 0.139, koh: 0.195, group: "동물성 유지" },
+            "lard":       { name: "돈지 (라드)",           naoh: 0.141, koh: 0.198, group: "동물성 유지" },
+            "tallow":     { name: "우지 (탈로우)",         naoh: 0.143, koh: 0.200, group: "동물성 유지" },
+            "goat_fat":   { name: "양지 (양기름)",         naoh: 0.139, koh: 0.195, group: "동물성 유지" },
+            "emu":        { name: "에뮤 오일",             naoh: 0.136, koh: 0.191, group: "동물성 유지" },
+            "lanolin":    { name: "라놀린",                naoh: 0.076, koh: 0.106, group: "동물성 유지" },
+            "shea":       { name: "시어버터",              naoh: 0.128, koh: 0.179, group: "버터류" },
+            "cocoa":      { name: "코코아버터",            naoh: 0.138, koh: 0.194, group: "버터류" },
+            "mango":      { name: "망고버터",              naoh: 0.137, koh: 0.192, group: "버터류" },
+            "kokum":      { name: "코쿰버터",              naoh: 0.137, koh: 0.192, group: "버터류" },
+            "illipe":     { name: "일리페버터",            naoh: 0.137, koh: 0.192, group: "버터류" },
+            "sal":        { name: "살버터",                naoh: 0.141, koh: 0.198, group: "버터류" },
+            "murumuru":   { name: "무루무루버터",          naoh: 0.170, koh: 0.238, group: "버터류" },
+            "cupuacu":    { name: "쿠푸아수버터",          naoh: 0.137, koh: 0.192, group: "버터류" },
+        };
+
+        const presetData = {
+            "pure_olive": {
+                lyeType: "NaOH", lye: 91, water: 243, superfat: 5,
+                oils: [{key:"olive",percent:100}]
+            },
+            "basic_3oil": {
+                lyeType: "NaOH", lye: 97, water: 243, superfat: 5,
+                oils: [{key:"olive",percent:40},{key:"coconut",percent:30},{key:"palm",percent:30}]
+            },
+            "moisture_rich": {
+                lyeType: "NaOH", lye: 89, water: 237, superfat: 7,
+                oils: [{key:"olive",percent:35},{key:"shea",percent:20},{key:"avocado",percent:20},{key:"coconut",percent:15},{key:"castor",percent:10}]
+            },
+            "baby_mild": {
+                lyeType: "NaOH", lye: 86, water: 258, superfat: 8,
+                oils: [{key:"olive",percent:50},{key:"shea",percent:20},{key:"almond",percent:20},{key:"coconut",percent:10}]
+            },
+            "cleansing": {
+                lyeType: "NaOH", lye: 107, water: 250, superfat: 3,
+                oils: [{key:"coconut",percent:40},{key:"palm",percent:30},{key:"olive",percent:20},{key:"castor",percent:10}]
+            },
+            "laundry": {
+                lyeType: "NaOH", lye: 120, water: 280, superfat: 0,
+                oils: [{key:"coconut",percent:70},{key:"palm",percent:30}]
+            },
+            "shampoo_bar": {
+                lyeType: "NaOH", lye: 99, water: 240, superfat: 5,
+                oils: [{key:"coconut",percent:35},{key:"olive",percent:25},{key:"castor",percent:20},{key:"palm",percent:20}]
+            },
+            "horse_oil": {
+                lyeType: "NaOH", lye: 92, water: 240, superfat: 6,
+                oils: [{key:"horse",percent:30},{key:"olive",percent:35},{key:"shea",percent:15},{key:"coconut",percent:15},{key:"castor",percent:5}]
+            },
+            "luxury": {
+                lyeType: "NaOH", lye: 91, water: 238, superfat: 7,
+                oils: [{key:"olive",percent:30},{key:"argan",percent:15},{key:"camelia",percent:15},{key:"mango",percent:15},{key:"coconut",percent:15},{key:"castor",percent:10}]
+            },
+        };
+
+        function getRecommendedRange() {
+            const lyeType = document.querySelector('input[name="lyeType"]:checked').value;
+            return lyeType === 'NaOH' ? { min: 25, max: 33, label: "권장 25~33%" } : { min: 20, max: 28, label: "권장 20~28%" };
+        }
+
+        function updateConcentration() {
+            const lye = parseFloat(document.getElementById('lyeAmount').value) || 0;
+            const water = parseFloat(document.getElementById('waterAmount').value) || 0;
+            const range = getRecommendedRange();
+
+            document.getElementById('concRangeLabel').innerText = range.label;
+            const safeEl = document.getElementById('concSafe');
+            safeEl.style.left = (range.min / 50 * 100) + '%';
+            safeEl.style.width = ((range.max - range.min) / 50 * 100) + '%';
+
+            if (lye <= 0 && water <= 0) {
+                document.getElementById('concValue').innerText = '--';
+                document.getElementById('concMarker').style.display = 'none';
+                document.getElementById('concWarning').style.display = 'none';
+                return;
+            }
+
+            const conc = (lye / (lye + water)) * 100;
+            const concValEl = document.getElementById('concValue');
+            const markerEl = document.getElementById('concMarker');
+            const warnEl = document.getElementById('concWarning');
+
+            concValEl.innerText = conc.toFixed(1) + '%';
+            markerEl.style.display = 'block';
+            markerEl.style.left = Math.min(Math.max(conc / 50 * 100, 2), 98) + '%';
+
+            if (conc >= range.min && conc <= range.max) {
+                concValEl.style.color = '#27ae60';
+                markerEl.style.backgroundColor = '#27ae60';
+                warnEl.style.display = 'none';
+            } else if (conc < range.min) {
+                concValEl.style.color = '#f39c12';
+                markerEl.style.backgroundColor = '#f39c12';
+                warnEl.style.display = 'block';
+                warnEl.style.backgroundColor = '#fef9e7';
+                warnEl.style.color = '#b7950b';
+                warnEl.innerHTML = '⚠️ 농도가 낮습니다 — 트레이스가 느리고 건조·숙성 시간이 길어질 수 있어요.';
+            } else {
+                concValEl.style.color = '#e74c3c';
+                markerEl.style.backgroundColor = '#e74c3c';
+                warnEl.style.display = 'block';
+                warnEl.style.backgroundColor = '#fdedec';
+                warnEl.style.color = '#c0392b';
+                warnEl.innerHTML = conc > 40
+                    ? '🚨 농도가 매우 높습니다 — 과열·화산 현상 위험! 작업 시간이 극히 짧아집니다.'
+                    : '⚠️ 농도가 다소 높습니다 — 트레이스가 빨리 올라오니 작업 시간에 주의하세요.';
+            }
+        }
+
+        function loadPreset() {
+            const key = document.getElementById('preset').value;
+            if (!key || !presetData[key]) return;
+            const p = presetData[key];
+            document.querySelectorAll('input[name="lyeType"]').forEach(r => { r.checked = (r.value === p.lyeType); });
+            document.getElementById('lyeAmount').value = p.lye;
+            document.getElementById('waterAmount').value = p.water;
+            document.getElementById('superfat').value = p.superfat;
+            document.getElementById('oilContainer').innerHTML = '';
+            p.oils.forEach(oil => addOilRow(oil.key, oil.percent));
+            updateConcentration();
+        }
+
+        function buildOilOptions(selectedKey) {
+            const groups = {};
+            for (const [key, data] of Object.entries(sapValues)) {
+                if (!groups[data.group]) groups[data.group] = [];
+                groups[data.group].push({ key, name: data.name });
+            }
+            let html = '<option value="">오일 선택</option>';
+            for (const [groupName, oils] of Object.entries(groups)) {
+                html += `<optgroup label="${groupName}">`;
+                oils.forEach(o => {
+                    html += `<option value="${o.key}" ${o.key === selectedKey ? "selected" : ""}>${o.name}</option>`;
+                });
+                html += '</optgroup>';
+            }
+            return html;
+        }
+
+        function addOilRow(selectedKey = "", percentValue = 100) {
+            const container = document.getElementById('oilContainer');
+            const row = document.createElement('div');
+            row.className = 'oil-row';
+            row.innerHTML = `
+                <select class="oil-select" onchange="updateTotalPercent()">${buildOilOptions(selectedKey)}</select>
+                <input type="number" class="oil-percent" placeholder="비율(%)" value="${percentValue}" oninput="updateTotalPercent()">
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove(); updateTotalPercent();">X</button>
+            `;
+            container.appendChild(row);
+            updateTotalPercent();
+        }
+
+        function updateTotalPercent() {
+            let total = 0;
+            document.querySelectorAll('.oil-percent').forEach(input => { total += Number(input.value) || 0; });
+            const s = document.getElementById('totalPercent');
+            s.innerText = total;
+            s.style.color = (total === 100) ? '#27ae60' : '#e74c3c';
+        }
+
+        function calculateSoap() {
+            const lyeType = document.querySelector('input[name="lyeType"]:checked').value;
+            const lye = parseFloat(document.getElementById('lyeAmount').value) || 0;
+            const water = parseFloat(document.getElementById('waterAmount').value) || 0;
+            const superfat = parseFloat(document.getElementById('superfat').value) || 0;
+
+            if (lye <= 0) { alert("잿물 투입량을 정확히 입력해주세요."); return; }
+            const rows = document.querySelectorAll('.oil-row');
+            if (rows.length === 0) { alert("최소 한 개의 오일을 추가해주세요."); return; }
+
+            let totalPercent = 0, avgSAP = 0;
+            const selectedOils = [];
+            let hasError = false;
+
+            rows.forEach(row => {
+                const oilKey = row.querySelector('.oil-select').value;
+                const percent = Number(row.querySelector('.oil-percent').value);
+                if (!oilKey || percent <= 0) { hasError = true; }
+                else {
+                    totalPercent += percent;
+                    const sap = lyeType === 'NaOH' ? sapValues[oilKey].naoh : sapValues[oilKey].koh;
+                    avgSAP += (percent / 100) * sap;
+                    selectedOils.push({ key: oilKey, percent, name: sapValues[oilKey].name });
+                }
+            });
+
+            if (hasError) { alert("모든 오일을 선택하고 올바른 비율을 입력해주세요."); return; }
+            if (Math.abs(totalPercent - 100) > 0.1) { alert(`오일 비율 합계가 ${totalPercent}%입니다. 100%로 맞춰주세요!`); return; }
+
+            const totalOil = lye / (avgSAP * (1 - superfat / 100));
+            const lyeConcentration = ((lye / (lye + water)) * 100).toFixed(1);
+
+            let html = `<div class="result-box">`;
+            selectedOils.forEach(oil => {
+                const amount = totalOil * (oil.percent / 100);
+                html += `<div class="result-item"><span>${oil.name} (${oil.percent}%)</span><span style="font-weight:bold;">${amount.toFixed(1)} g</span></div>`;
+            });
+            html += `<div class="result-item total-row"><span>총 필요 오일량 합계</span><span>${totalOil.toFixed(1)} g</span></div>`;
+
+            const lyeName = lyeType === 'NaOH' ? '가성소다' : '가성가리';
+            const range = getRecommendedRange();
+            const concNum = parseFloat(lyeConcentration);
+            const concStatus = (concNum >= range.min && concNum <= range.max) ? '✅ 적정' : (concNum < range.min ? '⚠️ 낮음' : '⚠️ 높음');
+
+            html += `
+                <div class="summary-box">
+                    <div style="font-weight:bold; margin-bottom:8px;">[ 레시피 요약 ]</div>
+                    <div>✔️ 잿물(${lyeName}): ${lye}g</div>
+                    <div>✔️ 정제수: ${water}g — 농도 ${lyeConcentration}% ${concStatus} <span style="color:#7f8c8d;">(${range.label})</span></div>
+                    <div>✔️ 슈퍼팻: ${superfat}% <span style="color:#7f8c8d;">(여분 오일 약 ${(totalOil * superfat / 100).toFixed(1)}g)</span></div>
+                    <div style="margin-top:5px;">✔️ 예상 비누 총 중량: <b>약 ${(totalOil + lye + water).toFixed(1)}g</b></div>
+                </div>`;
+            html += `</div>`;
+
+            document.getElementById('resultContent').innerHTML = html;
+            document.getElementById('resultArea').style.display = 'block';
+        }
+
+        window.onload = () => {
+            addOilRow();
+            updateConcentration();
+        };
+    </script>
+</body>
+</html>

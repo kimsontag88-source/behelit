@@ -241,6 +241,176 @@ function Cursor() {
   );
 }
 
+// ─── DECORATIVE PRIMITIVES ─────────────────────────────────────
+// 레퍼런스 DNA: 정보 밀도↑ · 액센트색↓ · UI 치장↑
+
+function MetaStrip({ items, color = "var(--fg3)", align = "left", style = {} }) {
+  return (
+    <div style={{
+      display:"flex",gap:14,flexWrap:"wrap",
+      justifyContent: align==="right"?"flex-end":align==="center"?"center":"flex-start",
+      alignItems:"center",fontFamily:"var(--mono)",fontSize:9,letterSpacing:".12em",
+      color,textTransform:"uppercase",...style,
+    }}>
+      {items.map((it,i)=>(
+        <span key={i} style={{display:"inline-flex",alignItems:"center",gap:5}}>
+          {it.label && <span style={{opacity:.5}}>{it.label}</span>}
+          <span style={{color:it.accent||color,opacity:.92,letterSpacing:".08em"}}>{it.value}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function Stamp({ text, subtext, color = "#ef4444", size = 78, rotate = -12, style = {} }) {
+  return (
+    <div style={{
+      width:size,height:size,borderRadius:"50%",
+      border:`2px solid ${color}`,
+      display:"inline-flex",alignItems:"center",justifyContent:"center",flexDirection:"column",
+      color,fontFamily:"var(--mono)",
+      transform:`rotate(${rotate}deg)`,
+      opacity:.7,textAlign:"center",padding:4,
+      boxShadow:`inset 0 0 0 1px ${color}33`,
+      ...style,
+    }}>
+      <div style={{fontSize: size<56?8:10,fontWeight:800,letterSpacing:".18em",lineHeight:1.1}}>{text}</div>
+      {subtext && <div style={{fontSize:6.5,marginTop:3,opacity:.7,letterSpacing:".1em"}}>{subtext}</div>}
+    </div>
+  );
+}
+
+function PropSVG({ type, size = 140, color = "#ff5c8a", opacity = 0.12, rotate = 0, style = {} }) {
+  const shapes = {
+    chain: (
+      <g stroke={color} strokeWidth="2" fill="none">
+        <ellipse cx="24" cy="24" rx="14" ry="8" transform="rotate(-30 24 24)"/>
+        <ellipse cx="46" cy="46" rx="14" ry="8" transform="rotate(60 46 46)"/>
+        <ellipse cx="68" cy="68" rx="14" ry="8" transform="rotate(-30 68 68)"/>
+        <ellipse cx="90" cy="90" rx="14" ry="8" transform="rotate(60 90 90)"/>
+      </g>
+    ),
+    card: (
+      <g fill="none" stroke={color} strokeWidth="1.8">
+        <rect x="22" y="10" width="62" height="92" rx="7"/>
+        <text x="29" y="30" fontSize="13" fontFamily="serif" fill={color}>A</text>
+        <text x="36" y="62" fontSize="30" fontFamily="serif" fill={color}>♠</text>
+        <text x="68" y="98" fontSize="13" fontFamily="serif" fill={color} transform="rotate(180 72 94)">A</text>
+      </g>
+    ),
+    egg: (
+      <g stroke={color} fill="none" strokeWidth="1.5">
+        <ellipse cx="60" cy="64" rx="34" ry="46"/>
+        <ellipse cx="52" cy="54" rx="3.5" ry="5.5" fill={color}/>
+        <ellipse cx="68" cy="54" rx="3.5" ry="5.5" fill={color}/>
+        <path d="M48 78 Q60 88 72 78"/>
+        <circle cx="60" cy="64" r="22" strokeDasharray="2,4" opacity=".5"/>
+      </g>
+    ),
+    sigil: (
+      <g stroke={color} strokeWidth="1.3" fill="none">
+        <circle cx="60" cy="60" r="50"/>
+        <circle cx="60" cy="60" r="38"/>
+        <polygon points="60,22 94,80 26,80"/>
+        <polygon points="60,98 26,40 94,40"/>
+        <circle cx="60" cy="60" r="6" fill={color}/>
+      </g>
+    ),
+    blade: (
+      <g stroke={color} fill="none" strokeWidth="1.6">
+        <path d="M18 104 L72 30 L82 40 L28 114 Z"/>
+        <rect x="66" y="26" width="24" height="8" rx="2"/>
+        <line x1="20" y1="102" x2="26" y2="108"/>
+      </g>
+    ),
+    barcode: (
+      <g fill={color}>
+        {[3,7,9,12,18,22,24,28,32,38,42,46,50,56,60,64,70,74,78,84,90,96,102,108,113].map((x,i)=>(
+          <rect key={i} x={x} y="28" width={i%3===0?2.4:1.2} height="64"/>
+        ))}
+      </g>
+    ),
+    handcuff: (
+      <g stroke={color} fill="none" strokeWidth="2">
+        <circle cx="36" cy="60" r="24"/>
+        <circle cx="36" cy="60" r="16"/>
+        <circle cx="86" cy="60" r="24"/>
+        <circle cx="86" cy="60" r="16"/>
+        <line x1="58" y1="60" x2="64" y2="60"/>
+      </g>
+    ),
+    dots: (
+      <g fill={color}>
+        {Array.from({length:16}).map((_,r)=>
+          Array.from({length:16}).map((_,c)=>(
+            <circle key={`${r}-${c}`} cx={8+c*7} cy={8+r*7} r={((r+c)%3===0)?1.2:0.5}/>
+          ))
+        )}
+      </g>
+    ),
+  };
+
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 120" style={{
+      transform:`rotate(${rotate}deg)`,pointerEvents:"none",opacity,...style,
+    }}>
+      {shapes[type] || null}
+    </svg>
+  );
+}
+
+function GlitchError({ text = "Click 'Fix' to fix error.", title = "Error", style = {} }) {
+  return (
+    <div style={{
+      display:"inline-block",background:"#d4d0c8",color:"#000",
+      fontFamily:"'Courier New', monospace",fontSize:10.5,
+      border:"2px outset #f0f0f0",
+      boxShadow:"2px 2px 0 rgba(0,0,0,.4)",
+      minWidth:220,userSelect:"none",...style,
+    }}>
+      <div style={{
+        background:"linear-gradient(to right,#000080,#1084d0)",color:"#fff",
+        padding:"3px 6px 3px 8px",display:"flex",justifyContent:"space-between",alignItems:"center",
+        fontSize:11,fontWeight:700,
+      }}>
+        <span>{title}</span>
+        <span style={{padding:"0 5px",background:"#c0c0c0",color:"#000",border:"1px outset #fff",fontWeight:400}}>×</span>
+      </div>
+      <div style={{padding:"12px 14px 10px"}}>
+        <div style={{display:"flex",gap:10,alignItems:"center"}}>
+          <div style={{width:28,height:28,borderRadius:"50%",background:"#c00",color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800,fontSize:18,flexShrink:0}}>×</div>
+          <span>{text}</span>
+        </div>
+        <div style={{textAlign:"center",marginTop:10}}>
+          <span style={{display:"inline-block",padding:"2px 18px",border:"1px outset #f0f0f0",background:"#c0c0c0",fontSize:11}}>Fix</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Splatter({ color = "#ff5c8a", opacity = 0.18, size = 300, style = {} }) {
+  // 페인트 튀김 — 비대칭 원 다수로 질감
+  return (
+    <svg width={size} height={size} viewBox="0 0 300 300" style={{pointerEvents:"none",opacity,...style}}>
+      <g fill={color}>
+        <circle cx="50" cy="80" r="22"/>
+        <circle cx="140" cy="60" r="6"/>
+        <circle cx="200" cy="120" r="14"/>
+        <circle cx="90" cy="180" r="9"/>
+        <circle cx="240" cy="220" r="18"/>
+        <circle cx="170" cy="250" r="4"/>
+        <circle cx="60" cy="240" r="12"/>
+        <circle cx="220" cy="60" r="3"/>
+        <circle cx="120" cy="140" r="2.5"/>
+        <circle cx="260" cy="160" r="5"/>
+        <path d="M40 100 Q60 110 80 95 T140 100" stroke={color} strokeWidth="2" fill="none"/>
+        <path d="M180 190 Q210 180 240 195" stroke={color} strokeWidth="1.5" fill="none"/>
+      </g>
+    </svg>
+  );
+}
+
 // ─── NAV ───────────────────────────────────────────────────────
 function Nav({ mode, onToggle, lang, onLangToggle }) {
   const [sc, setSc] = useState(false);
@@ -251,7 +421,7 @@ function Nav({ mode, onToggle, lang, onLangToggle }) {
   },[]);
 
   const sections = mode === "surface"
-    ? ["Works","Depth","Curiosity","Contact"]
+    ? ["Now","Works","Depth","Creator","Schedule","Contact"]
     : ["Apps","Upcoming","Philosophy","Contact"];
 
   const scrollTo = (id) => {
@@ -514,33 +684,45 @@ function TechMarquee() {
 // ─── STATS BAR ────────────────────────────────────────────────
 function StatsBar({ lang }) {
   const ref = useReveal();
-  const stats = lang === "kr" ? [
-    { num: "4+", label: "React Projects" },
-    { num: "3", label: "Published Apps" },
-    { num: "~10k", label: "Lines of Code" },
-    { num: "2", label: "Languages (KR/JA)" },
-  ] : [
-    { num: "6+", label: "Webプロジェクト" },
-    { num: "3", label: "リリース済みアプリ" },
-    { num: "~10k", label: "コード行数" },
-    { num: "2", label: "言語 (KR/JA)" },
+  const stats = [
+    { num:"14",   label_kr:"Years Game Industry", label_ja:"年 ゲーム業界",       accent:"#6c5fff" },
+    { num:"3",    label_kr:"Published Apps",      label_ja:"リリース済みアプリ",   accent:"#3dffb0" },
+    { num:"10",   label_kr:"Web Showcases",       label_ja:"Webショーケース",      accent:"#ff5c8a" },
+    { num:"#15",  label_kr:"CivitAI Top Trainer", label_ja:"CivitAI トップ #15",   accent:"#ef4444" },
+    { num:"2",    label_kr:"Languages (KR/JA)",   label_ja:"言語 (KR/JA)",         accent:"#ffb347" },
+    { num:"×2",   label_kr:"GPUs @ Home",         label_ja:"自宅GPU",               accent:"#22d3ee" },
+    { num:"∞",    label_kr:"Coffee Loop",         label_ja:"コーヒーループ",        accent:"var(--fg3)" },
   ];
   return (
     <div ref={ref} className="reveal section-pad" style={{paddingBottom:0}}>
       <div style={{
-        padding:"36px 44px",borderRadius:20,border:"1px solid var(--line)",
-        background:"rgba(255,255,255,.02)",
-        display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:28,
+        padding:"30px 38px 24px",borderRadius:20,border:"1px solid var(--line)",
+        background:"rgba(255,255,255,.02)",position:"relative",overflow:"hidden",
       }}>
-        {stats.map((s,i)=>(
-          <div key={i} style={{textAlign:"center"}}>
-            <div style={{fontFamily:"var(--sans)",fontSize:"clamp(32px,4vw,52px)",fontWeight:800,
-              background:"linear-gradient(135deg,#fff 40%,rgba(255,255,255,.4))",
-              WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",lineHeight:1,marginBottom:6,
-            }}>{s.num}</div>
-            <div style={{fontFamily:"var(--mono)",fontSize:10,color:"var(--fg3)",letterSpacing:".12em",textTransform:"uppercase"}}>{s.label}</div>
-          </div>
-        ))}
+        <PropSVG type="dots" size={160} color="#ffffff" opacity={.04} style={{position:"absolute",top:-20,right:-20}}/>
+        <div style={{
+          display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))",gap:20,position:"relative",zIndex:1,
+        }}>
+          {stats.map((s,i)=>(
+            <div key={i} style={{textAlign:"center",padding:"4px 0",borderRight: i<stats.length-1?"1px dashed rgba(255,255,255,.05)":"none"}}>
+              <div style={{fontFamily:"var(--sans)",fontSize:"clamp(26px,3.4vw,44px)",fontWeight:800,
+                background:`linear-gradient(135deg,#fff 30%,${s.accent} 140%)`,
+                WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",lineHeight:1,marginBottom:5,
+              }}>{s.num}</div>
+              <div style={{fontFamily:"var(--mono)",fontSize:9,color:"var(--fg3)",letterSpacing:".12em",textTransform:"uppercase",lineHeight:1.4}}>{lang==="kr" ? s.label_kr : s.label_ja}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{marginTop:18,paddingTop:14,borderTop:"1px dashed rgba(255,255,255,.04)",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:10}}>
+          <MetaStrip items={[
+            {label:"SN",  value:"BHL-2026-STATS"},
+            {label:"REV", value:"0042"},
+          ]}/>
+          <MetaStrip items={[
+            {label:"UPDATED", value:new Date().toISOString().slice(0,10)},
+            {label:"TZ",      value:"KST+09"},
+          ]} align="right"/>
+        </div>
       </div>
     </div>
   );
@@ -790,18 +972,47 @@ function ProjectCard({ p, delay=0, idx=0 }) {
 
 function ProjectsSection({ lang }) {
   const ref = useReveal();
+  const featured = PROJECTS.filter(p => p.featured);
+  const more     = PROJECTS.filter(p => !p.featured);
+
   return (
     <section id="works" className="section-pad">
-      <div ref={ref} className="reveal" style={{marginBottom:52}}>
+      <div ref={ref} className="reveal" style={{marginBottom:40,position:"relative"}}>
+        <PropSVG type="card" size={180} color="#6c5fff" opacity={.06} rotate={18} style={{position:"absolute",top:-20,right:0}}/>
         <div style={{fontFamily:"var(--mono)",fontSize:10,letterSpacing:".2em",color:"var(--b)",marginBottom:10,textTransform:"uppercase"}}>{lang==="kr" ? "Selected Works · 作品集" : "作品集 · Selected Works"}</div>
         <h2 style={{fontFamily:"var(--sans)",fontSize:"clamp(36px,5.5vw,68px)",fontWeight:800,letterSpacing:"-.03em",lineHeight:.97,color:"#fff"}}>
           {lang==="kr" ? (<>직접 만든 <br /><span style={{color:"var(--fg3)"}}>{PROJECTS.length}개의 우주</span></>) : (<>自分で作った<br /><span style={{color:"var(--fg3)"}}>{PROJECTS.length}つの宇宙</span></>)}
         </h2>
         <p style={{fontFamily:"var(--serif)",fontSize:13,color:"var(--fg2)",marginTop:8,letterSpacing:".04em"}}>{lang==="kr" ? `自分で作った${PROJECTS.length}つの宇宙` : `직접 만든 ${PROJECTS.length}개의 우주`}</p>
+        <MetaStrip style={{marginTop:16}} items={[
+          {label:"FEATURED", value:String(featured.length), accent:"var(--b)"},
+          {label:"MORE",     value:String(more.length)},
+          {label:"TOTAL",    value:String(PROJECTS.length)},
+          {label:"TAGS",     value:String(new Set(PROJECTS.flatMap(p=>p.tags)).size)},
+        ]}/>
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:18,maxWidth:1280,margin:"0 auto"}}>
-        {PROJECTS.map((p,i)=><ProjectCard key={p.title} p={p} delay={i*.08} idx={i}/>)}
+
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
+        <span style={{width:6,height:6,borderRadius:"50%",background:"var(--b)",boxShadow:"0 0 6px var(--b)"}}/>
+        <span style={{fontFamily:"var(--mono)",fontSize:10,color:"var(--b)",letterSpacing:".2em"}}>FEATURED · 주력작</span>
+        <span style={{flex:1,height:1,background:"linear-gradient(to right,var(--b)33,transparent)"}}/>
       </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:18,maxWidth:1280,margin:"0 auto 40px"}}>
+        {featured.map((p,i)=><ProjectCard key={p.title} p={p} delay={i*.06} idx={i}/>)}
+      </div>
+
+      {more.length > 0 && (
+        <>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
+            <span style={{width:6,height:6,borderRadius:"50%",background:"var(--fg3)"}}/>
+            <span style={{fontFamily:"var(--mono)",fontSize:10,color:"var(--fg3)",letterSpacing:".2em"}}>MORE · 실험작 · 小作</span>
+            <span style={{flex:1,height:1,background:"linear-gradient(to right,var(--fg3)33,transparent)"}}/>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:14,maxWidth:1280,margin:"0 auto"}}>
+            {more.map((p,i)=><ProjectCard key={p.title} p={p} delay={i*.05} idx={i+featured.length}/>)}
+          </div>
+        </>
+      )}
     </section>
   );
 }
@@ -873,14 +1084,25 @@ Stable Diffusion → 게임 아트 생성
   ];
 
   return (
-    <section id="depth" className="section-pad">
+    <section id="depth" className="section-pad" style={{position:"relative"}}>
+      <div style={{position:"absolute",top:36,right:"clamp(24px,6vw,96px)",display:"none",zIndex:1}} className="glitch-err-float">
+        <GlitchError text="Segmentation fault (core dumped)" title="debug.exe"/>
+      </div>
+      <style>{`@media (min-width:1100px){.glitch-err-float{display:block !important;transform:rotate(-4deg);opacity:.55}}`}</style>
       <div ref={ref} className="reveal">
-        <div style={{marginBottom:44}}>
-          <div style={{fontFamily:"var(--mono)",fontSize:10,letterSpacing:".2em",color:"#ffb347",marginBottom:10,textTransform:"uppercase"}}>Technical Depth · 技術の深度</div>
-          <h2 style={{fontFamily:"var(--sans)",fontSize:"clamp(30px,4.5vw,56px)",fontWeight:800,letterSpacing:"-.03em",lineHeight:.97,color:"#fff",marginBottom:6}}>
-            {lang==="kr" ? (<>어떻게, 왜<br/><span style={{color:"var(--fg3)"}}>이렇게 만들었는가</span></>) : (<>どのように、なぜ<br/><span style={{color:"var(--fg3)"}}>こう作ったのか</span></>)}
-          </h2>
-          <p style={{fontFamily:"var(--serif)",fontSize:13,color:"var(--fg2)",letterSpacing:".04em"}}>{lang==="kr" ? "どのように、なぜこう作ったのか" : "어떻게, 왜 이렇게 만들었는가"}</p>
+        <div style={{marginBottom:44,display:"flex",justifyContent:"space-between",alignItems:"flex-end",flexWrap:"wrap",gap:16}}>
+          <div>
+            <div style={{fontFamily:"var(--mono)",fontSize:10,letterSpacing:".2em",color:"#ffb347",marginBottom:10,textTransform:"uppercase"}}>Technical Depth · 技術の深度</div>
+            <h2 style={{fontFamily:"var(--sans)",fontSize:"clamp(30px,4.5vw,56px)",fontWeight:800,letterSpacing:"-.03em",lineHeight:.97,color:"#fff",marginBottom:6}}>
+              {lang==="kr" ? (<>어떻게, 왜<br/><span style={{color:"var(--fg3)"}}>이렇게 만들었는가</span></>) : (<>どのように、なぜ<br/><span style={{color:"var(--fg3)"}}>こう作ったのか</span></>)}
+            </h2>
+            <p style={{fontFamily:"var(--serif)",fontSize:13,color:"var(--fg2)",letterSpacing:".04em"}}>{lang==="kr" ? "どのように、なぜこう作ったのか" : "어떻게, 왜 이렇게 만들었는가"}</p>
+          </div>
+          <MetaStrip items={[
+            {label:"ITEMS", value:"3"},
+            {label:"REV",   value:"2026.04"},
+            {label:"VER",   value:"v2"},
+          ]}/>
         </div>
 
         <div style={{display:"flex",flexDirection:"column",gap:20}}>
@@ -1159,6 +1381,296 @@ function PhilosophySection({ lang }) {
   );
 }
 
+// ─── NOW · WORKS IN PROGRESS ──────────────────────────────────
+const NOW_ITEMS = [
+  { tag:"LIVE", kr:"Rakughost v4.1 그래픽·오디오 통합", ja:"Rakughost v4.1 グラフィック·オーディオ統合", pct:80, color:"#ef4444" },
+  { tag:"WIP",  kr:"Zpandemic II 모바일 포팅 기획",    ja:"Zpandemic II モバイル移植企画",         pct:35, color:"#ffb347" },
+  { tag:"R&D",  kr:"Lumina/NetaYume bf16 LoRA 학습",   ja:"Lumina/NetaYume bf16 LoRA 学習",         pct:55, color:"#3dffb0" },
+];
+
+function NowSection({ lang }) {
+  const ref = useReveal();
+  const today = new Date().toISOString().slice(0,10);
+  return (
+    <section id="now" className="section-pad" style={{paddingTop:20,paddingBottom:48}}>
+      <div ref={ref} className="reveal" style={{
+        position:"relative",padding:"26px 30px",
+        border:"1px solid var(--line)",borderRadius:18,
+        background:"linear-gradient(135deg,rgba(239,68,68,.04),rgba(0,0,0,.15))",overflow:"hidden",
+      }}>
+        <PropSVG type="dots" size={220} color="#ef4444" opacity={.09} style={{position:"absolute",top:-30,right:-30}}/>
+
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18,flexWrap:"wrap",gap:12,position:"relative",zIndex:1}}>
+          <div>
+            <div style={{display:"inline-flex",alignItems:"center",gap:8,marginBottom:4}}>
+              <span style={{width:8,height:8,borderRadius:"50%",background:"#ef4444",boxShadow:"0 0 0 0 rgba(239,68,68,.6)",animation:"pulse-r 1.4s ease infinite",display:"inline-block"}}/>
+              <span style={{fontFamily:"var(--mono)",fontSize:10,color:"#ef4444",letterSpacing:".2em"}}>NOW · 今</span>
+            </div>
+            <h2 style={{fontFamily:"var(--sans)",fontSize:"clamp(22px,3vw,32px)",fontWeight:800,color:"#fff",letterSpacing:"-.02em"}}>
+              {lang==="kr" ? "지금 만드는 중" : "現在制作中"}
+            </h2>
+          </div>
+          <MetaStrip items={[
+            {label:"DATE",value:today},
+            {label:"STATUS",value:"ONLINE",accent:"#3dffb0"},
+            {label:"BUILD",value:"0042"},
+          ]} align="right"/>
+        </div>
+
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:14,position:"relative",zIndex:1}}>
+          {NOW_ITEMS.map((it,i)=>(
+            <div key={i} style={{padding:"14px 16px",border:`1px solid ${it.color}2b`,borderRadius:10,background:"rgba(0,0,0,.28)"}}>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
+                <span style={{fontFamily:"var(--mono)",fontSize:9,color:it.color,letterSpacing:".18em"}}>{it.tag}</span>
+                <span style={{fontFamily:"var(--mono)",fontSize:9,color:"var(--fg3)"}}>{it.pct}%</span>
+              </div>
+              <div style={{fontSize:12,color:"var(--fg)",lineHeight:1.55,marginBottom:10}}>{lang==="kr" ? it.kr : it.ja}</div>
+              <div style={{height:2,background:"rgba(255,255,255,.06)",borderRadius:2}}>
+                <div style={{height:"100%",width:`${it.pct}%`,background:it.color,borderRadius:2,boxShadow:`0 0 6px ${it.color}`}}/>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── HARDWARE STACK ───────────────────────────────────────────
+const HARDWARE = [
+  { role:"MAIN", label:"RTX 5060",       note_kr:"kohya sd-scripts · SDXL 학습", note_ja:"kohya sd-scripts · SDXL 学習",  color:"#ff5c8a" },
+  { role:"SUB",  label:"RTX 3060 12GB",  note_kr:"병렬 학습 · 배치 보조",         note_ja:"並列学習 · バッチ補助",          color:"#6c5fff" },
+  { role:"DEV",  label:"Mac Mini M4",    note_kr:"Flutter · iOS 빌드",            note_ja:"Flutter · iOS ビルド",           color:"#3dffb0" },
+  { role:"HOME", label:"Raspberry Pi",   note_kr:"홈서버 · 24h 가동",             note_ja:"ホームサーバー · 24h 稼働",       color:"#ffb347" },
+];
+
+function HardwareSection({ lang }) {
+  const ref = useReveal();
+  return (
+    <section id="hardware" className="section-pad">
+      <div ref={ref} className="reveal">
+        <div style={{marginBottom:28}}>
+          <div style={{fontFamily:"var(--mono)",fontSize:10,letterSpacing:".2em",color:"#ffb347",marginBottom:10,textTransform:"uppercase"}}>Stack · ハードウェア · 작업실</div>
+          <h2 style={{fontFamily:"var(--sans)",fontSize:"clamp(28px,4vw,48px)",fontWeight:800,letterSpacing:"-.03em",lineHeight:.97,color:"#fff",marginBottom:8}}>
+            {lang==="kr" ? (<>물리적 스택<br/><span style={{color:"var(--fg3)"}}>직접 구축한 작업실</span></>) : (<>物理スタック<br/><span style={{color:"var(--fg3)"}}>自作のアトリエ</span></>)}
+          </h2>
+          <MetaStrip style={{marginTop:14}} items={[
+            {label:"GPU",  value:"×2",         accent:"#ff5c8a"},
+            {label:"CPU",  value:"M4"},
+            {label:"NODE", value:"Pi 4"},
+            {label:"SN",   value:"BHL-HW-2026"},
+            {label:"LOC",  value:"SEOUL"},
+          ]}/>
+        </div>
+
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:14}}>
+          {HARDWARE.map((h,i)=>(
+            <div key={i} style={{
+              position:"relative",padding:"18px 18px",
+              border:`1px solid ${h.color}22`,borderRadius:12,
+              background:`linear-gradient(135deg,${h.color}07,rgba(0,0,0,.22))`,overflow:"hidden",
+            }}>
+              <div style={{fontFamily:"var(--mono)",fontSize:9,color:h.color,letterSpacing:".22em",marginBottom:8}}>{h.role}</div>
+              <div style={{fontFamily:"var(--display)",fontSize:20,color:"#fff",marginBottom:6,letterSpacing:".02em"}}>{h.label}</div>
+              <div style={{fontSize:11,color:"var(--fg2)",lineHeight:1.6}}>{lang==="kr" ? h.note_kr : h.note_ja}</div>
+              <div style={{position:"absolute",bottom:6,right:10,fontFamily:"var(--mono)",fontSize:9,color:`${h.color}66`,letterSpacing:".1em"}}>{String(i+1).padStart(2,"0")}/04</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── CREATOR (AI · LoRA · Doujin) ─────────────────────────────
+function CreatorSection({ lang }) {
+  const ref = useReveal();
+  const crimson = "#ef4444";
+  return (
+    <section id="creator" className="section-pad">
+      <div ref={ref} className="reveal" style={{
+        position:"relative",padding:"clamp(36px,5vw,56px) clamp(28px,4vw,48px)",
+        border:`1px solid ${crimson}22`,borderRadius:24,
+        background:`linear-gradient(135deg,${crimson}08 0%,rgba(0,0,0,.15) 100%)`,
+        overflow:"hidden",
+      }}>
+        <PropSVG type="blade" size={190} color={crimson} opacity={.11} rotate={-14} style={{position:"absolute",top:-26,right:-24}}/>
+        <PropSVG type="chain" size={220} color={crimson} opacity={.08} rotate={200}   style={{position:"absolute",bottom:-46,left:-30}}/>
+        <div style={{position:"absolute",top:32,right:48,zIndex:1}}>
+          <Stamp text="R-TRAINER" subtext="#15 CIVITAI" color={crimson} size={76} rotate={-14}/>
+        </div>
+
+        <div style={{position:"relative",zIndex:1,maxWidth:960}}>
+          <div style={{fontFamily:"var(--mono)",fontSize:10,letterSpacing:".2em",color:crimson,marginBottom:10,textTransform:"uppercase"}}>Creator · 創作者 · 작가</div>
+          <h2 style={{fontFamily:"var(--sans)",fontSize:"clamp(30px,4.5vw,54px)",fontWeight:800,letterSpacing:"-.03em",lineHeight:.97,color:"#fff",marginBottom:14}}>
+            {lang==="kr" ? (<>코드만 쓰는 게<br/><span style={{color:"var(--fg3)"}}>아니다</span></>) : (<>コードだけ<br/><span style={{color:"var(--fg3)"}}>書くわけではない</span></>)}
+          </h2>
+          <p style={{fontSize:14,color:"var(--fg2)",lineHeight:1.85,marginBottom:24,maxWidth:720}}>
+            {lang==="kr"
+              ? "Behelit 이름으로는 LoRA·DoRA 학습자로, 만화·동인지 세팅 제작자로도 활동 중. 개발과 창작은 같은 회로의 두 노드라고 본다."
+              : "Behelit名義でLoRA·DoRAトレーナー、漫画·同人誌のセッティング制作者として活動中。開発と創作は同じ回路の二つのノード。"}
+          </p>
+
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:14}}>
+            <div data-h style={{
+              padding:"20px",borderRadius:12,
+              border:`1px solid ${crimson}33`,background:"rgba(0,0,0,.3)",
+              transition:"all .3s",cursor:"default",
+            }}>
+              <div style={{fontFamily:"var(--mono)",fontSize:9,color:crimson,letterSpacing:".22em",marginBottom:8}}>CIVITAI · RANK</div>
+              <div style={{fontFamily:"var(--display)",fontSize:22,color:"#fff",marginBottom:4,letterSpacing:".02em"}}>Top Trainer #15</div>
+              <div style={{fontSize:11,color:"var(--fg2)",lineHeight:1.6}}>{lang==="kr" ? "LoRA/DoRA 글로벌 랭킹" : "LoRA/DoRA グローバルランキング"}</div>
+              <MetaStrip style={{marginTop:12}} items={[
+                {label:"ARCH", value:"DoRA"},
+                {label:"BASE", value:"SDXL"},
+              ]}/>
+            </div>
+
+            <div style={{padding:"20px",borderRadius:12,border:`1px solid ${crimson}22`,background:"rgba(0,0,0,.22)"}}>
+              <div style={{fontFamily:"var(--mono)",fontSize:9,color:crimson,letterSpacing:".22em",marginBottom:8}}>MODELS</div>
+              <div style={{fontFamily:"var(--display)",fontSize:19,color:"#fff",marginBottom:4,letterSpacing:".02em"}}>Pony · Illustrious · NoobAI</div>
+              <div style={{fontSize:11,color:"var(--fg2)",lineHeight:1.6}}>{lang==="kr" ? "SDXL 주력 · bf16 Lumina/NetaYume" : "SDXL メイン · bf16 Lumina/NetaYume"}</div>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:12}}>
+                {["dim=96","alpha=48","LoCon+","bf16 only"].map(t=>(
+                  <span key={t} style={{fontFamily:"var(--mono)",fontSize:9,padding:"2px 8px",border:`1px solid ${crimson}33`,color:crimson,letterSpacing:".08em"}}>{t}</span>
+                ))}
+              </div>
+            </div>
+
+            <div style={{padding:"20px",borderRadius:12,border:`1px solid ${crimson}22`,background:"rgba(0,0,0,.22)"}}>
+              <div style={{fontFamily:"var(--mono)",fontSize:9,color:crimson,letterSpacing:".22em",marginBottom:8}}>DOUJIN · 同人</div>
+              <div style={{fontFamily:"var(--display)",fontSize:20,color:"#fff",marginBottom:4,letterSpacing:".02em"}}>Behelit 브랜드</div>
+              <div style={{fontSize:11,color:"var(--fg2)",lineHeight:1.6}}>{lang==="kr" ? "만화·세팅·동인지 창작" : "漫画·世界観·同人誌創作"}</div>
+              <div style={{marginTop:12,fontFamily:"'Instrument Serif',serif",fontStyle:"italic",fontSize:12,color:"var(--fg3)",letterSpacing:".02em"}}>
+                {lang==="kr" ? "\"개발자의 반쪽은 이야기꾼이다\"" : "\"開発者のもう半分は物語師だ\""}
+              </div>
+            </div>
+          </div>
+
+          <div style={{marginTop:28,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:16,borderTop:`1px dashed ${crimson}22`,paddingTop:16}}>
+            <div style={{fontFamily:"'Instrument Serif',serif",fontStyle:"italic",fontSize:13,color:"var(--fg3)"}}>
+              {lang==="kr" ? "OccultAI = 코드 · Behelit = 이야기" : "OccultAI = コード · Behelit = 物語"}
+            </div>
+            <PropSVG type="barcode" size={110} color={crimson} opacity={.28}/>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── SCHEDULE · RELEASE TIMELINE ──────────────────────────────
+const SCHEDULE = [
+  { date:"2025.Q1", status:"RELEASED", kr:"Robotics Workshop", ja:"ロボット工房",  link:"https://play.google.com/store/apps/details?id=com.occultai.robotics_workshop" },
+  { date:"2025.Q2", status:"RELEASED", kr:"Kaleidoscope",      ja:"万華鏡",        link:"https://play.google.com/store/apps/details?id=com.occultai.kaleidoscope" },
+  { date:"2025.Q3", status:"RELEASED", kr:"Nantoiu",           ja:"何と言う",      link:"https://play.google.com/store/apps/details?id=com.occultai.nantoiu" },
+  { date:"2026.Q2", status:"UPCOMING", kr:"진보의 대가",        ja:"ディストピア経営", link:"https://play.google.com/store/apps/details?id=com.occultai.priceofp" },
+  { date:"2026.Q2", status:"UPCOMING", kr:"산중관리동",         ja:"規則書",        link:"https://play.google.com/store/apps/details?id=com.occultai.napolitan" },
+  { date:"2026.Q3", status:"UPCOMING", kr:"6월 11일, 영원히",   ja:"永遠の回帰",    link:"https://play.google.com/store/apps/details?id=com.occultai.june" },
+  { date:"2026.Q4", status:"PLAN",     kr:"Rakughost 정식판",    ja:"Rakughost 正式版" },
+  { date:"2026.Q4", status:"PLAN",     kr:"DEADZONE II 모바일",  ja:"DEADZONE II モバイル" },
+];
+
+function ScheduleSection({ lang }) {
+  const ref = useReveal();
+  const gold = "#ffb347";
+  const statusColor = { RELEASED:"#3dffb0", UPCOMING:gold, PLAN:"#6c5fff" };
+
+  return (
+    <section id="schedule" className="section-pad">
+      <div ref={ref} className="reveal">
+        <div style={{marginBottom:28,display:"flex",justifyContent:"space-between",alignItems:"flex-end",flexWrap:"wrap",gap:16}}>
+          <div>
+            <div style={{fontFamily:"var(--mono)",fontSize:10,letterSpacing:".2em",color:gold,marginBottom:10,textTransform:"uppercase"}}>Schedule · 日程表 · 일정표</div>
+            <h2 style={{fontFamily:"var(--display)",fontSize:"clamp(32px,4.5vw,56px)",fontWeight:400,letterSpacing:".02em",lineHeight:1,color:"#fff"}}>
+              {lang==="kr" ? "릴리스 계획" : "リリース予定"}
+            </h2>
+          </div>
+          <MetaStrip items={[
+            {label:"RELEASED", value:"3", accent:"#3dffb0"},
+            {label:"UPCOMING", value:"3", accent:gold},
+            {label:"PLAN",     value:"2", accent:"#6c5fff"},
+          ]}/>
+        </div>
+
+        <div style={{border:"1px solid var(--line)",borderRadius:14,background:"rgba(0,0,0,.22)",overflow:"hidden"}}>
+          {SCHEDULE.map((s,i)=>{
+            const c = statusColor[s.status];
+            const Inner = (
+              <div style={{
+                display:"flex",gap:14,alignItems:"center",padding:"14px 18px",
+                borderBottom: i<SCHEDULE.length-1?"1px solid var(--line)":"none",
+                transition:"background .25s",flexWrap:"wrap",
+              }}
+                onMouseEnter={e=>{e.currentTarget.style.background=`${c}08`}}
+                onMouseLeave={e=>{e.currentTarget.style.background="transparent"}}>
+                <div style={{fontFamily:"var(--mono)",fontSize:11,color:"var(--fg3)",letterSpacing:".12em",minWidth:80}}>{s.date}</div>
+                <div style={{fontFamily:"var(--mono)",fontSize:9,color:c,letterSpacing:".2em",minWidth:92,padding:"2px 8px",border:`1px solid ${c}33`,borderRadius:100,textAlign:"center"}}>{s.status}</div>
+                <div style={{flex:1,display:"flex",gap:10,alignItems:"baseline",flexWrap:"wrap",minWidth:200}}>
+                  <span style={{fontFamily:"var(--sans)",fontSize:14,color:"#fff",fontWeight:600}}>{lang==="kr" ? s.kr : s.ja}</span>
+                  <span style={{fontFamily:"var(--serif)",fontSize:11,color:"var(--fg3)"}}>{lang==="kr" ? s.ja : s.kr}</span>
+                </div>
+                {s.link && <span style={{fontFamily:"var(--mono)",fontSize:11,color:c}}>↗</span>}
+              </div>
+            );
+            return s.link ? (
+              <a key={i} href={s.link} target="_blank" rel="noopener noreferrer" data-h style={{display:"block",textDecoration:"none",color:"inherit"}}>{Inner}</a>
+            ) : (
+              <div key={i}>{Inner}</div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── LOGO SHOWCASE ────────────────────────────────────────────
+function LogoShowcase({ lang }) {
+  const ref = useReveal();
+  return (
+    <section className="section-pad" style={{paddingBottom:40}}>
+      <div ref={ref} className="reveal" style={{
+        padding:"44px 24px 36px",border:"1px solid var(--line)",borderRadius:20,
+        background:"linear-gradient(135deg,rgba(108,95,255,.03),rgba(255,92,138,.02))",
+        position:"relative",overflow:"hidden",
+      }}>
+        <PropSVG type="sigil" size={300} color="#6c5fff" opacity={.05} style={{position:"absolute",top:-80,left:"50%",transform:"translateX(-50%)"}}/>
+        <PropSVG type="barcode" size={90} color="#ff5c8a" opacity={.25} style={{position:"absolute",bottom:10,right:18}}/>
+
+        <MetaStrip align="center" items={[
+          {label:"MARK",        value:"BHL × OCC"},
+          {label:"YEAR",        value:"2026"},
+          {label:"DESIGNED BY", value:"BEHELIT", accent:"#ff5c8a"},
+        ]}/>
+
+        <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:"clamp(20px,4vw,60px)",flexWrap:"wrap",margin:"32px 0 20px",position:"relative",zIndex:1}}>
+          <div style={{textAlign:"center"}}>
+            <div style={{fontFamily:"var(--display)",fontSize:"clamp(36px,5vw,64px)",color:"#fff",letterSpacing:".04em",lineHeight:1}}>BEHELIT</div>
+            <div style={{fontFamily:"var(--mono)",fontSize:9,color:"var(--fg3)",marginTop:6,letterSpacing:".3em"}}>01 · DISPLAY</div>
+          </div>
+          <div style={{textAlign:"center"}}>
+            <div style={{display:"inline-flex",alignItems:"center",justifyContent:"center",width:64,height:64,borderRadius:"50%",border:"2px solid #ff5c8a",color:"#ff5c8a",fontSize:32,fontFamily:"serif"}}>♠</div>
+            <div style={{fontFamily:"var(--mono)",fontSize:9,color:"var(--fg3)",marginTop:6,letterSpacing:".3em"}}>02 · MARK</div>
+          </div>
+          <div style={{textAlign:"center"}}>
+            <div style={{fontFamily:"var(--serif)",fontSize:"clamp(22px,3vw,36px)",color:"#6c5fff",letterSpacing:".15em",fontStyle:"italic"}}>OccultAI</div>
+            <div style={{fontFamily:"var(--mono)",fontSize:9,color:"var(--fg3)",marginTop:6,letterSpacing:".3em"}}>03 · SERIF</div>
+          </div>
+          <div style={{textAlign:"center"}}>
+            <div style={{fontFamily:"var(--mono)",fontSize:"clamp(14px,2vw,20px)",color:"#3dffb0",letterSpacing:".2em",border:"1px dashed #3dffb066",padding:"7px 14px"}}>BHL × OCC</div>
+            <div style={{fontFamily:"var(--mono)",fontSize:9,color:"var(--fg3)",marginTop:6,letterSpacing:".3em"}}>04 · MONO</div>
+          </div>
+        </div>
+
+        <div style={{fontFamily:"'Instrument Serif',serif",fontStyle:"italic",fontSize:13,color:"var(--fg3)",textAlign:"center",letterSpacing:".04em"}}>
+          {lang==="kr" ? "두 브랜드, 하나의 회로" : "二つのブランド、一つの回路"}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── CONTACT ──────────────────────────────────────────────────
 function ContactSection({ mode, lang }) {
   const ref = useReveal();
@@ -1301,11 +1813,16 @@ export default function Portfolio() {
         {mode === "surface" ? (
           <>
             <StatsBar lang={lang}/>
+            <NowSection lang={lang}/>
             <TechMarquee/>
             <ProjectsSection lang={lang}/>
             <TechnicalDepth lang={lang}/>
+            <HardwareSection lang={lang}/>
             <CuriositySection lang={lang}/>
+            <CreatorSection lang={lang}/>
+            <ScheduleSection lang={lang}/>
             <PhilosophySection lang={lang}/>
+            <LogoShowcase lang={lang}/>
           </>
         ) : (
           <>
