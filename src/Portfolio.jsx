@@ -4,7 +4,19 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 // GLOBAL CSS
 // ═══════════════════════════════════════════════════════════════
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=DotGothic16&display=swap');
+  @import url('https://cdn.jsdelivr.net/gh/MonadABXY/mona-font/web/mona.css');
+
+  @font-face {
+    font-family: 'DosStory';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/DOSIyagiMedium.woff2') format('woff2');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Seogung';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-4@1.1/Suhgung12.woff2') format('woff2');
+    font-display: swap;
+  }
 
   :root {
     --bg:     #07070f;
@@ -19,7 +31,18 @@ const CSS = `
     --line:   rgba(255,255,255,0.055);
     --sans:   'Syne', sans-serif;
     --serif:  'Noto Serif JP', 'Instrument Serif', serif;
-    --mono:   'JetBrains Mono', monospace;
+    --mono:   'Seogung', 'Mona12', 'DotGothic16', 'JetBrains Mono', monospace;
+    --code:   'JetBrains Mono', 'Mona12', monospace;
+    --display:'DosStory', 'Seogung', 'DotGothic16', sans-serif;
+    --pixel-emoji: 'Mona12 Color Emoji', 'Mona12 Emoji', sans-serif;
+  }
+
+  .pixel, [data-pixel] {
+    font-family: var(--mono);
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+    font-smooth: never;
+    image-rendering: pixelated;
   }
 
   *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
@@ -119,7 +142,7 @@ const CSS = `
     --g: #33ff77;
     --line: rgba(0,255,0,0.08);
   }
-  .occult-mode body, .occult-mode { font-family: var(--mono); }
+  .occult-mode body, .occult-mode { font-family: var(--code); }
 
   .glitch-overlay {
     position:fixed; inset:0; z-index:99999;
@@ -312,7 +335,7 @@ function Hero({ mode, lang }) {
     return (
       <section style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",position:"relative",padding:"0 clamp(24px,6vw,96px)",textAlign:"center"}}>
         <div style={{animation:"fadeIn 1s ease .2s both"}}>
-          <pre style={{fontFamily:"var(--mono)",fontSize:"clamp(10px,1.2vw,14px)",color:"#0f0",opacity:.5,letterSpacing:2,lineHeight:1.6,marginBottom:32}}>
+          <pre style={{fontFamily:"var(--code)",fontSize:"clamp(10px,1.2vw,14px)",color:"#0f0",opacity:.5,letterSpacing:2,lineHeight:1.6,marginBottom:32}}>
 {`╔═══════════════════════╗
 ║  DIGITAL  OCCULTISM  ║
 ╚═══════════════════════╝`}
@@ -725,7 +748,7 @@ function ProjectCard({ p, delay=0, idx=0 }) {
           <div style={{fontFamily:"var(--serif)",fontSize:11,color:"var(--fg3)",textAlign:"right",letterSpacing:".04em",lineHeight:1.6}}>{p.ja}</div>
         </div>
 
-        <h3 style={{fontFamily:"var(--sans)",fontSize:21,fontWeight:800,color:"#fff",letterSpacing:"-.02em",marginBottom:3}}>
+        <h3 style={{fontFamily:"var(--display)",fontSize:24,fontWeight:400,color:"#fff",letterSpacing:".02em",marginBottom:5,WebkitFontSmoothing:"none",MozOsxFontSmoothing:"grayscale"}}>
           {p.link ? <a href={p.link} target="_blank" rel="noopener noreferrer" style={{color:"inherit",textDecoration:"none"}}>{p.title} ↗</a> : p.title}
         </h3>
         <p style={{fontFamily:"var(--serif)",fontSize:12,color:p.color,marginBottom:14,opacity:.85,letterSpacing:".04em"}}>{p.sub}</p>
@@ -752,7 +775,7 @@ function ProjectCard({ p, delay=0, idx=0 }) {
         </div>
 
         <div style={{maxHeight:hov?130:0,overflow:"hidden",transition:"max-height .5s cubic-bezier(.25,.46,.45,.94)"}}>
-          <pre style={{fontFamily:"var(--mono)",fontSize:10.5,lineHeight:1.7,color:"rgba(255,255,255,.3)",background:"rgba(0,0,0,.35)",borderRadius:10,padding:"12px 14px",border:"1px solid rgba(255,255,255,.06)",whiteSpace:"pre-wrap",wordBreak:"break-all"}}>
+          <pre style={{fontFamily:"var(--code)",fontSize:10.5,lineHeight:1.7,color:"rgba(255,255,255,.3)",background:"rgba(0,0,0,.35)",borderRadius:10,padding:"12px 14px",border:"1px solid rgba(255,255,255,.06)",whiteSpace:"pre-wrap",wordBreak:"break-all"}}>
             {p.snippet.split("\n").map((line,i)=>{
               const isComment = line.trim().startsWith("//");
               return <span key={i} style={{display:"block",color:isComment?`${p.color}99`:"rgba(255,255,255,.35)"}}>{line}</span>;
