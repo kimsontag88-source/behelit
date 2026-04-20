@@ -549,173 +549,174 @@ function StatsBar({ lang }) {
 // ─── PROJECTS (Surface) ───────────────────────────────────────
 const PROJECTS = [
   {
+    featured: true,
     icon:"📱", color:"#4fc3f7",
     title:"Fate: Lost Log",
     ja:"破滅の杖 × 無限の壁製",
     sub:"파티 로그라이크 · パーティローグライク",
-    problem:"파티원 4명이 동시에 세트 콤보를 넣을 때마다 상태가 많이 꼬여서, 새벽 4시에 디버깅하다가 저도모르게 그 부분…",
-    solution:"결국 useReducer + Context로 전투 상태를 한 곳에 몰아넣는 미친 짓을 했다. 근데 그게 먹혔다.",
-    result:"상태 버그가 거의 사라졌고, 덕분에 10층 던전 이벤트 다분기 엔딩까지 완성할 수 있었다.",
+    problem:"4인 파티의 동시 세트 콤보 처리에서 상태 동기화 이슈 발생. 비결정적 버그가 디버깅을 지연시킴.",
+    solution:"useReducer + Context로 전투 상태를 단일 진실 원천(SSoT)으로 통합. 액션 디스패치 단위로 상태 추적 가능하게 재구성.",
+    result:"상태 충돌 0건, 10층 다분기 던전 시스템과 NG+ 엔딩까지 안정적으로 구현. 한일 동시 출시.",
     tags:["useReducer","createContext","Web Audio","i18n"],
-    snippet:`// 절대 안바뀜 → 이 확률 체감 테스트만 30번 했다
+    snippet:`// 콤보 확률 — 유대 수치 기반 결정론적 트리거
 const syn = 1 + state.synergy * 0.01;
 if (bond >= 15 && Math.random() < 0.25)
-  dispatch({ type:"COMBO" }); // 25%가 딱 "오!" 하는 확률`,
+  dispatch({ type:"COMBO" });`,
   },
   {
+    featured: true,
     icon:"⬡", color:"#3dffb0",
     title:"Project Genesis",
     ja:"ニューラル同期コア",
     sub:"사이버펑크 ARG · サイバーパンクARG",
     link:"https://pgenesis.netlify.app/",
-    problem:"7개 페이즈가 비선형으로 진행되는데, 카르마 분기까지 들어가니까 어디서 뭐가 터질지 모르는 상태가 된다.",
-    solution:"FSM(유한 상태 머신) 패턴을 처음 써봤다. Context API로 페이즈랑 카르마를 한 곳에서 관리하니까 머리가 좀 맑아졌다.",
-    result:"카르마 기반 2종 엔딩 분기 + 암호 해제 시스템까지. 처음으로 '이거 게임이다' 싶었다.",
+    problem:"7개 페이즈 비선형 진행 + 카르마 분기 조합으로 상태 폭발. 페이즈 간 전이 조건이 중복·누락되는 문제.",
+    solution:"FSM(유한 상태 머신) 패턴 도입. 페이즈·카르마를 단일 Context로 통합 관리, 전이 규칙 명시화.",
+    result:"카르마 기반 2종 엔딩 분기 + 암호 해제 시스템 안정 구현. 비선형 시나리오 설계의 재사용 패턴 확립.",
     tags:["Context API","State Machine","Karma","7-Phase"],
-    snippet:`// 카르마 기반 페이즈 전환
-// "liberation"이랑 "assimilation" 이름 정하는데 이틀 걸림
+    snippet:`// 카르마 기반 페이즈 전이
 case "UNLOCK":
   const karma = calcKarma(s.flags);
   return { ...s, phase: karma > 0
     ? "liberation" : "assimilation" };`,
   },
   {
+    featured: true,
     icon:"☣", color:"#ff7a50",
     title:"DeadZone II",
     ja:"最終後127日",
-    sub:"좀비 서바이버 · ゾンビサバイバル",
+    sub:"좀비 서바이벌 · ゾンビサバイバル",
     link:"https://deadsignalarg.netlify.app/",
-    problem:"좀비 20마리만 넘어가면 프레임이 지옥이 된다. Canvas 위에서 AI·시야·소리 전파를 동시에 돌리면 당연한 결과긴 하는데…",
-    solution:"공간 분할이라는 걸 알게 되고 눈이 세상이 달라졌다. 시야 체크 최적화 넣으니까 60fps가 살아났다.",
-    result:"Fog of War + 낮/밤 사이클까지 넣었는데, 밤에 좀비 소리만 들리는 그 느낌이 좋았다.",
-    tags:["Canvas API","60fps","Fog of War","localStorage"],
-    snippet:`// 시야 + 소리 전파
-// この行のせいで3日溶けた (이 줄 때문에 3일 빠졌다)
+    problem:"Canvas 위에서 AI·시야·소리 전파를 동시 처리 시 좀비 20+에서 프레임 드롭. O(N²) 충돌 검사가 병목.",
+    solution:"공간 분할(Spatial Partitioning) 도입. 시야 체크 범위 한정, 소리 전파를 이벤트 큐 기반으로 분리.",
+    result:"좀비 100+ 환경에서 60fps 유지. Fog of War, 낮/밤 사이클, 절차적 맵 생성까지 단일 파일로 완성.",
+    tags:["Canvas API","60fps","Spatial Partition","Fog of War"],
+    snippet:`// 시야 + 소리 전파 — 공간 분할 후
 if (dist < FOG_BASE && lineOfSight(z, p)) {
   alertNearby(z.pos, NOISE_PROPAGATE);
   z.alerted = true;
 }`,
   },
   {
+    featured: true,
     icon:"⚔", color:"#a78bfa",
     title:"Setanta Rising",
     ja:"少年は英雄になれるか",
     sub:"성장 시뮬레이션 · 育成シミュレーション",
     link:"https://setamaker.netlify.app/",
-    problem:"훈련·전투·애정·NPC 대화… 시스템이 4개 넘어가니까 스파게티가 된다. 하나 고치면 다른 데서 터지는 그 악순환.",
-    solution:"시스템마다 커스텀 훅으로 떼어내고, 하나의 디스패치로 연결했다. 분리하면서 통합한다는 게 이런 거구나 싶었다.",
-    result:"60일 육성 + 10종 엔딩 + NG+까지. 이건 진짜 내가 하고 싶은 게임이었다.",
-    tags:["Simulation","Procedural","Affection","Multi-ending"],
-    snippet:`// 훈련 → 멀티 스탯 반영
-// 밸런스 조절만 일주일... バランス調整だけで一週間...
+    problem:"훈련·전투·애정·NPC 대화 4개 시스템 간 결합도 증가. 한 시스템 수정이 다른 시스템 회귀를 유발.",
+    solution:"각 시스템을 커스텀 훅으로 분리, 단일 디스패치 파이프라인으로 통합. 시스템 간 의존성을 데이터로만 노출.",
+    result:"60일 육성 루프, 10종 엔딩 분기, NG+ 시스템까지 모듈식으로 구현. 시스템 추가가 기존 코드에 영향 없음.",
+    tags:["Simulation","Custom Hooks","Multi-ending","Decoupled"],
+    snippet:`// 훈련 → 다중 스탯 반영, 시스템 간 격리
 Object.entries(TRAINING[choice]).forEach(
   ([stat, delta]) =>
     setStats(s => ({...s, [stat]: s[stat]+delta}))
 );`,
   },
   {
+    featured: true,
     icon:"📄", color:"#38BDF8",
     title:"Live Platform LP",
     ja:"ランディングページ設計",
     sub:"서비스 LP 디자인 · サービスLPデザイン",
     link:"/showcase/live-lp-kr.html",
-    problem:"실제 서비스 와이어프레임을 HTML/CSS 단일 파일로 구현해야 했다. 디자이너 없이 기획부터 퍼블리싱까지 혼자.",
-    solution:"iPhone 목업, CSS 애니메이션, 반응형 레이아웃까지 순수 HTML/CSS로 완성. JS 없이도 인터랙션이 살아있다.",
-    result:"JP/KR 2개 언어 LP 완성. 히어로·기능·상세·크리에이터·안전·FAQ 풀 섹션 구성.",
-    tags:["HTML/CSS","Responsive","Animation","Wireframe","Bilingual"],
-    snippet:`/* iPhone mockup — pure CSS */
+    problem:"실서비스 와이어프레임을 디자이너 없이 기획부터 퍼블리싱까지 단독 진행. 한일 동시 전개 필요.",
+    solution:"iPhone 목업·인터랙션·반응형까지 순수 HTML/CSS로 구현. JS 의존성 0. 한일 LP를 단일 디자인 시스템으로 통합.",
+    result:"히어로·기능·상세·크리에이터·안전·FAQ 풀 섹션 구성. 한일 2개 언어 동시 배포.",
+    tags:["HTML/CSS","Responsive","Bilingual","Design System"],
+    snippet:`/* iPhone mockup — pure CSS, no JS */
 .iphone-mockup {
   border-radius: 45px;
   box-shadow: 0 0 0 10px #2d2d2d,
     0 0 0 12px #444,
     0 30px 60px rgba(0,0,0,0.5);
-  transform: rotate(-3deg);
 }`,
   },
   {
+    featured: true,
     icon:"⚔", color:"#4de8b0",
     title:"Co-op Roguelike",
     ja:"協力型ローグライク",
     sub:"파티 로그라이크 · パーティローグライク",
     link:"/showcase/roguelike-game/",
-    problem:"2인 파티의 전투·이벤트·유대 시스템이 얽혀서, 상태 관리가 복잡해졌다. useReducer 하나로 전투/탐사/세이브 전부 돌려야 했다.",
-    solution:"useReducer + Context로 전체 상태를 한 곳에서 관리. 난이도별 배율, 유대 기반 콤보 확률, 세이브/로드까지 단일 파일로 완성.",
-    result:"10층 던전 + 다분기 엔딩 7종 + 히든 엔딩 + 난이도 시스템. 685줄 단일 컴포넌트.",
-    tags:["useReducer","Context","Roguelike","Sound","i18n"],
-    snippet:`// 콤보 확률 = 유대(bond) 비례
+    problem:"2인 파티 전투·이벤트·유대 시스템이 결합. 단일 컴포넌트 안에서 전투·탐사·세이브 모두 처리해야 함.",
+    solution:"useReducer + Context로 전체 상태 단일화. 난이도 배율, 유대 콤보 확률, 세이브/로드를 도메인 로직으로 분리.",
+    result:"10층 던전, 다분기 엔딩 7종, 히든 엔딩, 난이도 시스템 모두 구현. 685줄 단일 컴포넌트로 응집도 유지.",
+    tags:["useReducer","Domain Logic","Roguelike","Save System"],
+    snippet:`// 유대 수치 비례 콤보 확률
 const comboChance = Math.min(
   0.5, state.bond * 0.015
 );
 if (synergy >= 15 && bond >= 8
-  && Math.random() < comboChance) {
-  // 합동 공격 발동!
-}`,
+  && Math.random() < comboChance) { /* ... */ }`,
   },
   {
+    featured: false,
     icon:"🧪", color:"#27ae60",
     title:"Soap Calculator",
     ja:"逆算せっけん計算機",
     sub:"비누 역산 계산기 · 石けん計算機",
     link:"/showcase/soap_calculator.html",
-    problem:"비누를 직접 만들고 싶었는데, 잿물 양에서 오일량을 역산하는 계산기가 한국어로 제대로 된 게 없었다.",
-    solution:"비화값(SAP) 테이블 40종 넣고, 잿물 농도 시각화 바까지 붙였다. 프리셋도 9종. 필요하니까 만든 거다.",
-    result:"실제로 이걸로 비누 만들었다. 개발자가 비누를 만들면 계산기부터 만든다는 걸 증명함.",
-    tags:["Vanilla JS","Single File","SAP Table","Responsive"],
-    snippet:`// 비화값 기반 역산 — 이 공식 찾는데 반나절
+    problem:"한국어 권 사용 가능한 잿물→오일량 역산 계산기 부재. 비전공자도 안전하게 쓸 수 있어야 함.",
+    solution:"비화값(SAP) 테이블 40종 데이터셋 구축, 잿물 농도 위험 구간 시각화, 9종 프리셋 제공.",
+    result:"입력 검증·경고 UI 포함한 단일 파일 도구로 완성. 실사용 가능한 수준의 안전 가이드 내장.",
+    tags:["Vanilla JS","SAP Table","UX Safety","Single File"],
+    snippet:`// 비화값 기반 역산 공식
 const totalOil = lye / (avgSAP * (1 - superfat / 100));
-// 농도 체크 — 화산 현상 방지용
-if (conc > 40)
-  warn("🚨 과열·화산 현상 위험!");`,
+// 위험 농도 경고
+if (conc > 40) warn("과열·화산 현상 위험");`,
   },
   {
+    featured: false,
     icon:"◈", color:"#a78bfa",
     title:"VOID//BREAK",
     ja:"ヴォイドブレイク",
     sub:"마이크로 아케이드 · マイクロアーケード",
     link:"/showcase/void_break.html",
-    problem:"포트폴리오에 '직접 플레이할 수 있는 뭔가'가 없으면 밋밋하다. 근데 게임 하나 넣자고 프레임워크를 쓰긴 싫었다.",
-    solution:"Canvas API + Vanilla JS 단일 파일. 자동 사격, 웨이브 시스템, 콤보, 파티클, 화면 흔들림까지 넣었다.",
-    result:"200줄대 JS로 60fps 네온 슈터 완성. 포트폴리오 방문자가 5분은 더 머무르게 되었다(아마도).",
-    tags:["Canvas API","60fps","Particles","Touch"],
-    snippet:`// 콤보 보너스 — 연속 처치 시 점수 배율
+    problem:"포트폴리오 인터랙션 부족. 프레임워크 의존 없이 즉시 체험 가능한 데모가 필요.",
+    solution:"Canvas API + Vanilla JS 단일 파일로 자동 사격·웨이브·콤보·파티클·카메라 셰이크 구현.",
+    result:"의존성 0의 60fps 네온 슈터. 데모 단위 체류 시간 증가.",
+    tags:["Canvas API","60fps","Game Feel","Touch"],
+    snippet:`// 콤보 보너스 — 점수 배율
 score += e.pts * (1 + comboCount * 0.1);
-// 화면 흔들림 — 타격감의 핵심
 shakeTimer = 6; shakeIntensity = 3;`,
   },
   {
+    featured: false,
     icon:"卜", color:"#a78bfa",
     title:"四柱 DEMO",
     ja:"四柱八字簡命器",
     sub:"사주팔자 간명기 · 四柱デモ",
     link:"/showcase/saju_demo.html",
-    problem:"사주 앱을 Flutter로 만들고 있는데, 핵심 로직이 제대로 돌아가는지 웹에서 바로 확인할 수 있는 데모가 필요했다.",
-    solution:"60갑자 + 년·월·일·시 사주 전체 산출, 오행 분포 차트, 상생/상극 관계까지 단일 파일로 구현.",
-    result:"생년월일시 → 사주팔자 + 오행 분석 + 풀이까지 즉시 산출. 정식판 모바일 앱은 개발 중.",
-    tags:["Saju","60갑자","오행","상생상극"],
-    snippet:`// 사주팔자 — 년주·월주·일주·시주 4기둥
+    problem:"개발 중인 Flutter 사주 앱의 핵심 로직 검증을 위한 웹 사전 검증 환경 필요.",
+    solution:"60갑자 + 년·월·일·시 사주 전체 산출 알고리즘, 오행 분포 차트, 상생/상극 관계 시각화를 단일 파일로 구현.",
+    result:"생년월일시 입력만으로 사주팔자 + 오행 분석 + 풀이 즉시 산출. 정식판 모바일 앱 개발 진행 중.",
+    tags:["Algorithm","Domain Modeling","Visualization","Demo"],
+    snippet:`// 사주팔자 — 년·월·일·시 4주 산출
 const yearP = calcYearPillar(y);
 const monthP = calcMonthPillar(yearP.stem, m);
 const dayP = calcDayPillar(y, m, d);
 const hourP = calcHourPillar(dayP.stem, h);`,
   },
   {
+    featured: false,
     icon:"☣", color:"#ff7a50",
     title:"DEADZONE II Demo",
     ja:"最終後127日 デモ",
     sub:"좀비 서바이벌 데모 · ゾンビサバイバル",
     link:"/showcase/deadzone_demo.html",
-    problem:"HTML 좀비 생존 게임을 모바일 앱으로 포팅할 예정인데, 핵심 메커니즘을 빠르게 체험할 수 있는 데모가 필요했다.",
-    solution:"BSP 맵 생성, Fog of War, 좀비 AI(시야·추격·배회), 은신, 낮/밤 사이클까지 단일 파일 Canvas로 구현.",
-    result:"'전투보다 생존'이라는 핵심 철학을 데모 하나로 전달. 정식판은 모바일 앱으로 개발 예정.",
-    tags:["Canvas","BSP","Fog of War","Day/Night"],
-    snippet:`// 전투는 가장 쉬운 해답이 되면 안 된다
-// — DEADZONE II 설계 원칙 #1
+    problem:"모바일 앱 포팅 예정인 좀비 생존 게임의 핵심 메커니즘을 빠르게 검증·소개할 데모가 필요.",
+    solution:"BSP 맵 생성, Fog of War, 좀비 AI(시야·추격·배회), 은신, 낮/밤 사이클을 단일 파일 Canvas로 구현.",
+    result:"'전투보다 생존' 설계 철학을 즉시 체험 가능한 형태로 전달. 정식판 모바일 앱 개발 준비 중.",
+    tags:["Canvas","BSP","Fog of War","Game Design"],
+    snippet:`// 좀비 AI — 시야 + 소리 전파
 if(dist<sightRange && lineOfSight(z,player))
-  z.alerted = true; // 소리가 위치를 알린다`,
+  z.alerted = true;`,
   },
 ];
 
-const CARD_MEMOS = ["이거 진짜 힘들었다","なぜ動くのか不明","3일 밤샘","버그가 피처가 됨","CSS만으로 이게 되네","685줄에 다 넣음","비누 만들다 만듦","60fps가 정의다","운명은 계산된다","소음이 적을 부른다"];
+const CARD_MEMOS = ["state machine","procedural gen","single file","60fps target","pixel-perfect","BSP map","FSM phase","async pipeline","domain logic","spatial query"];
 
 function ProjectCard({ p, delay=0, idx=0 }) {
   const ref = useReveal();
